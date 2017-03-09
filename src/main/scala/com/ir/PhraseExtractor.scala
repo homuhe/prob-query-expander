@@ -16,7 +16,7 @@ class PhraseExtractor {
     val delimiter = "[ \t\n\r,.?!\\-:;()\\[\\]'\"/*#&$]+"
     val words = Source.fromFile(inputfile).getLines().filter(!_.isEmpty).map(_.split("\t")(1)).map(_.toLowerCase())
     val spacePattern = Pattern.compile(delimiter)
-    val newwords = words.filter(el => spacePattern.matcher(el).find() == false)
+    val newwords = words.filter(el => spacePattern.matcher(el).find() == false).toArray
     newwords
   }
 }
