@@ -1,0 +1,73 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	ATF	ATF	_	NP
+6	BURNS	Burns	_	NP
+7	DIVIDIAN	<unknown>	_	NP
+8	RANCH	Ranch	_	NP
+9	!	!	_	SENT
+
+1	NO	no	_	DT
+2	SURVIVORS	<unknown>	_	NP
+3	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	|	|	_	SYM
+2	Do	do	_	VBP
+3	you	you	_	PP
+4	think	think	_	VBP
+5	a	a	_	DT
+6	$200	<unknown>	_	JJ
+7	tax	tax	_	NN
+8	evasion	evasion	_	NN
+9	justifies	justify	_	VBZ
+10	an	an	_	DT
+11	armed	armed	_	JJ
+12	assault	assault	_	NN
+13	by	by	_	IN
+14	the	the	_	DT
+15	government	government	_	NN
+16	|	|	_	SYM
+17	with	with	_	IN
+18	100	@card@	_	CD
+19	armed	armed	_	JJ
+20	men	man	_	NNS
+21	in	in	_	IN
+22	trailers	trailer	_	NNS
+23	,	,	_	,
+24	orchestrated	orchestrate	_	VBD
+25	character	character	_	NN
+26	assassination	assassination	_	NN
+27	,	,	_	,
+28	noise	noise	_	NN
+29	|	|	_	SYM
+30	torture	torture	_	NN
+31	,	,	_	,
+32	and	and	_	CC
+33	a	a	_	DT
+34	holocaust	holocaust	_	NN
+35	?	?	_	SENT
+
+1	Shit	shit	_	NN
+2	,	,	_	,
+3	i	i	_	NNS
+4	'm	be	_	VBP
+5	going	go	_	VBG
+6	to	to	_	TO
+7	be	be	_	VB
+8	a	a	_	DT
+9	lot	lot	_	NN
+10	more	more	_	RBR
+11	carefull	<unknown>	_	JJ
+12	filling	filling	_	NN
+13	by	by	_	IN
+14	income	income	_	NN
+15	tax	tax	_	NN
+16	!	!	_	SENT
+
+1	jim	<unknown>	_	NN
+2	shirreffs	<unknown>	_	NNS

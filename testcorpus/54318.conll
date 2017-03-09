@@ -1,0 +1,120 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	Change	change	_	NN
+6	of	of	_	IN
+7	name	name	_	NN
+8	?	?	_	SENT
+
+1	?	?	_	SENT
+
+1	1	1	_	LS
+2	.	.	_	SENT
+
+1	Make	make	_	VB
+2	a	a	_	DT
+3	new	new	_	JJ
+4	Newsgroup	<unknown>	_	NN
+5	called	call	_	VBD
+6	talk.politics.guns.PARANOID	<unknown>	_	JJ
+7	or	or	_	CC
+8	talk.politics.guns.THEY'R.HERE.TO.TAKE.ME.AWAY	<unknown>	_	JJ
+9	2	2	_	CD
+10	.	.	_	SENT
+
+1	Move	move	_	VB
+2	all	all	_	DT
+3	postings	posting	_	NNS
+4	about	about	_	IN
+5	waco	<unknown>	_	NN
+6	and	and	_	CC
+7	burn	burn	_	VB
+8	to	to	_	TO
+9	(	(	_	(
+10	guess	guess	_	NN
+11	where).	<unknown>	_	NN
+12	.	.	_	SENT
+
+1	3	3	_	LS
+2	.	.	_	SENT
+
+1	Stop	stop	_	VB
+2	posting	post	_	VBG
+3	####	<unknown>	_	NN
+4	on	on	_	IN
+5	this	this	_	DT
+6	newsgroup	<unknown>	_	NN
+7	We	we	_	PP
+8	are	be	_	VBP
+9	all	all	_	DT
+10	SO	<unknown>	_	NNS
+11	glad	glad	_	VBP
+12	you	you	_	PP
+13	're	be	_	VBP
+14	trying	try	_	VBG
+15	to	to	_	TO
+16	save	save	_	VB
+17	us	us	_	PP
+18	from	from	_	IN
+19	the	the	_	DT
+20	evil	evil	_	JJ
+21	goverment	goverment	_	NN
+22	,	,	_	,
+23	but	but	_	CC
+24	would	would	_	MD
+25	you	you	_	PP
+26	mail	mail	_	VB
+27	this	this	_	DT
+28	####	<unknown>	_	NN
+29	in	in	_	IN
+30	regular	regular	_	JJ
+31	mail	mail	_	NN
+32	to	to	_	TO
+33	let	let	_	VB
+34	's	be	_	VBZ
+35	say	say	_	VB
+36	1000	@card@	_	CD
+37	people	people	_	NNS
+38	?	?	_	SENT
+
+1	?	?	_	SENT
+
+1	?	?	_	SENT
+
+1	?	?	_	SENT
+
+1	This	this	_	DT
+2	is	be	_	VBZ
+3	not	not	_	RB
+4	a	a	_	DT
+5	.signature	<unknown>	_	NN
+6	.	.	_	SENT
+
+1	It	it	_	PP
+2	's	be	_	VBZ
+3	merely	merely	_	RB
+4	a	a	_	DT
+5	computergenerated	<unknown>	_	JJ
+6	text	text	_	NN
+7	to	to	_	TO
+8	waste	waste	_	VB
+9	bandwith	<unknown>	_	NN
+10	and	and	_	CC
+11	to	to	_	TO
+12	bring	bring	_	VB
+13	down	down	_	RP
+14	the	the	_	DT
+15	evil	evil	_	JJ
+16	Internet	Internet	_	NN
+17	.	.	_	SENT
+
+1	Thomas	Thomas	_	NP
+2	Parsli	<unknown>	_	NP
+3	How	How	_	WRB
+4	about	about	_	RB
+5	a	a	_	DT
+6	group	group	_	NN
+7	called	call	_	VBD
+8	talk.that.thomas.parsli.approves	<unknown>	_	NNS
+9	?	?	_	SENT

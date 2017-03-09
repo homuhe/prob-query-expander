@@ -1,0 +1,83 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	ATF	ATF	_	NP
+6	BURNS	Burns	_	NP
+7	DIVIDIAN	<unknown>	_	NP
+8	RANCH	Ranch	_	NP
+9	!	!	_	SENT
+
+1	NO	no	_	DT
+2	SURVIVORS	<unknown>	_	NP
+3	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	As	as	_	IN
+2	someone	someone	_	NN
+3	else	else	_	RB
+4	has	have	_	VBZ
+5	pointed	point	_	VBN
+6	out	out	_	RP
+7	,	,	_	,
+8	why	why	_	WRB
+9	would	would	_	MD
+10	the	the	_	DT
+11	stove	stove	_	NN
+12	be	be	_	VB
+13	in	in	_	IN
+14	use	use	_	NN
+15	on	on	_	IN
+16	a	a	_	DT
+17	warm	warm	_	JJ
+18	day	day	_	NN
+19	in	in	_	IN
+20	Texas	Texas	_	NP
+21	.	.	_	SENT
+
+1	Do	do	_	VB
+2	YOU	you	_	PP
+3	eat	eat	_	VB
+4	all	all	_	PDT
+5	your	your	_	PP$
+6	food	food	_	NN
+7	cold	cold	_	NN
+8	?	?	_	SENT
+
+1	Ever	ever	_	RB
+2	hear	hear	_	VB
+3	of	of	_	IN
+4	electric	electric	_	JJ
+5	ovens	oven	_	NNS
+6	or	or	_	CC
+7	microwaves	microwave	_	NNS
+8	?	?	_	SENT
+
+1	Very	very	_	RB
+2	popular	popular	_	JJ
+3	.	.	_	SENT
+
+1	Electric	Electric	_	NP
+2	stoves	stove	_	VBZ
+3	outside	outside	_	JJ
+4	metro-areas	<unknown>	_	NNS
+5	especially	especially	_	RB
+6	.	.	_	SENT
+
+1	And	and	_	CC
+2	they	they	_	PP
+3	work	work	_	VBP
+4	especially	especially	_	RB
+5	well	well	_	RB
+6	when	when	_	WRB
+7	the	the	_	DT
+8	Feds	<unknown>	_	NPS
+9	have	have	_	VBP
+10	cut	cut	_	VBN
+11	off	off	_	RP
+12	your	your	_	PP$
+13	utilities	utility	_	NNS
+14	.	.	_	SENT

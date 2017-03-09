@@ -1,0 +1,46 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Cult	cult	_	NN
+4	practices	practice	_	NNS
+5	of	of	_	IN
+6	the	the	_	DT
+7	FBI	FBI	_	NP
+8	Broadcasting	Broadcasting	_	NP
+9	amplified	amplify	_	VBD
+10	sounds	sound	_	NNS
+11	of	of	_	IN
+12	tortured	tortured	_	JJ
+13	rabbits	rabbit	_	NNS
+14	?	?	_	SENT
+
+1	Burning	burn	_	VBG
+2	alive	alive	_	JJ
+3	men	man	_	NNS
+4	,	,	_	,
+5	women	woman	_	NNS
+6	,	,	_	,
+7	and	and	_	CC
+8	children	child	_	NNS
+9	?	?	_	SENT
+
+1	We	we	_	PP
+2	have	have	_	VBP
+3	on	on	_	IN
+4	our	our	_	PP$
+5	hands	hand	_	NNS
+6	here	here	_	RB
+7	some	some	_	DT
+8	truly	truly	_	RB
+9	sick	sick	_	JJ
+10	puppies	puppy	_	NNS
+11	.	.	_	SENT
+
+1	Jim	Jim	_	NP
+2	Hart	Hart	_	NP
+3	Arlen	Arlen	_	NP
+4	Specter	Specter	_	NP
+5	for	for	_	IN
+6	President	President	_	NP
+7	in	in	_	IN
+8	'	'	_	POS
+9	96	@card@	_	CD

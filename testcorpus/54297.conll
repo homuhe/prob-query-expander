@@ -1,0 +1,34 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	BATF/FBI	<unknown>	_	NP
+6	revenge	revenge	_	NN
+7	Well	well	_	RB
+8	,	,	_	,
+9	maybe	maybe	_	RB
+10	I	I	_	PP
+11	AM	be	_	VBP
+12	overreacting	overreact	_	VBG
+13	.	.	_	SENT
+
+1	This	this	_	DT
+2	is	be	_	VBZ
+3	probably	probably	_	RB
+4	the	the	_	DT
+5	best	good	_	JJS
+6	part	part	_	NN
+7	of	of	_	IN
+8	your	your	_	PP$
+9	post	post	_	NN
+10	.	.	_	SENT
+
+1	Everything	Everything	_	NN
+2	else	else	_	RB
+3	is	be	_	VBZ
+4	shrill	shrill	_	JJ
+5	speculation	speculation	_	NN
+6	.	.	_	SENT
+
+1	Tom	Tom	_	NP
+2	Gift	Gift	_	NP
