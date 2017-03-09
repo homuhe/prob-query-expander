@@ -7,7 +7,7 @@ import scala.collection.mutable
   */
 object QueryExpander {
 
-  val stopwords = List("of", "in", "to", "per", "the")
+  val stopwords = List("of", "in", "to", "per", "the", "by", "a")
   val unigrams  = mutable.HashMap[Array[String], List[Int]]()
   val bigrams   = mutable.HashMap[Array[String], List[Int]]()
   val trigrams  = mutable.HashMap[Array[String], List[Int]]()
@@ -27,7 +27,7 @@ object QueryExpander {
 
 
     for (word <- input) {
-      if (uni == 2) {
+      if (uni == 1) {
         //put in map
         val value = unigrams.getOrElseUpdate(unigram, List())
         val newvalue = docID::value
@@ -36,7 +36,7 @@ object QueryExpander {
         unigram = Array[String]()
         uni = 0
       }
-      if (bi == 3) {
+      if (bi == 2) {
         //put bigram in map
         val value = bigrams.getOrElseUpdate(bigram, List())
         val newvalue = docID::value
@@ -45,7 +45,7 @@ object QueryExpander {
         bigram = Array[String]()
         bi = 0
       }
-      if (tri == 4) {
+      if (tri == 3) {
         // put trigram in map
         val value = trigrams.getOrElseUpdate(trigram, List())
         val newvalue = docID::value
@@ -64,19 +64,16 @@ object QueryExpander {
         bi  += 1
         tri += 1
       }
-      
-
     }
-
   }
 
   def main(args : Array[String]) {
     val pe = new PhraseExtractor
     val  f = "testcorpus/53293.conll"
-    val words = pe.preprocessFile(f)
+    val words = pe.preprocessing(f)
     extract_ngrams(words, stopwords, 122)
-    println(unigrams.size)
-    unigrams.foreach{case (key, value) => key.length}
+    //println(unigrams.size)
+
   }
 
 
