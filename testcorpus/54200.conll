@@ -1,0 +1,169 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	2ND	<unknown>	_	NP
+6	AMENDMENT	Amendment	_	NP
+7	DEAD	Dead	_	NP
+8	-	-	_	:
+9	GOOD	Good	_	NP
+10	!	!	_	SENT
+
+1	DATE	date	_	NN
+2	:	:	_	:
+3	18	@card@	_	CD
+4	Apr	Apr	_	NN
+5	93	@card@	_	CD
+6	00:13:19	@card@	_	CD
+7	-0500	@card@	_	CD
+8	Yea	<unknown>	_	NP
+9	,	,	_	,
+10	there	there	_	EX
+11	are	be	_	VBP
+12	millions	million	_	NNS
+13	of	of	_	IN
+14	cases	case	_	NNS
+15	where	where	_	WRB
+16	yoy	<unknown>	_	NN
+17	*say*	<unknown>	_	NN
+18	that	that	_	IN
+19	firearms	firearm	_	NNS
+20	'	'	_	''
+21	deter	deter	_	VBP
+22	'	'	_	POS
+23	criminals	criminal	_	NNS
+24	.	.	_	SENT
+
+1	Alas	alas	_	UH
+2	,	,	_	,
+3	this	this	_	DT
+4	is	be	_	VBZ
+5	not	not	_	RB
+6	provable	provable	_	JJ
+7	.	.	_	SENT
+
+1	In	in	_	IN
+2	my	my	_	PP$
+3	case	case	_	NN
+4	I	I	_	PP
+5	am	be	_	VBP
+6	alive	alive	_	JJ
+7	thanks	thank	_	NNS
+8	to	to	_	TO
+9	a	a	_	DT
+10	gun	gun	_	NN
+11	,	,	_	,
+12	that	that	_	WDT
+13	is	be	_	VBZ
+14	provable.	<unknown>	_	JJ
+15	.	.	_	SENT
+
+1	even	even	_	RB
+2	in	in	_	IN
+3	your	your	_	PP$
+4	twisted	twisted	_	JJ
+5	logic	logic	_	NN
+6	.	.	_	SENT
+
+1	I	I	_	PP
+2	think	think	_	VBP
+3	that	that	_	RB
+4	that	that	_	IN
+5	there	there	_	EX
+6	are	be	_	VBP
+7	actually	actually	_	RB
+8	*few*	<unknown>	_	JJ
+9	cases	case	_	NNS
+10	where	where	_	WRB
+11	this	this	_	DT
+12	is	be	_	VBZ
+13	so	so	_	RB
+14	.	.	_	SENT
+
+1	No	No	_	UH
+2	...	...	_	:
+3	Wrong	wrong	_	JJ
+4	again	again	_	RB
+5	brain	brain	_	NN
+6	trust.	<unknown>	_	NN
+7	.	.	_	SENT
+
+1	The	the	_	DT
+2	bulk	bulk	_	NN
+3	of	of	_	IN
+4	firarems	<unknown>	_	NNS
+5	are	be	_	VBP
+6	used	use	_	VBN
+7	against	against	_	IN
+8	unworthy	unworthy	_	JJ
+9	and	and	_	CC
+10	unnesessary	<unknown>	_	JJ
+11	opponents	opponent	_	NNS
+12	Huh	Huh	_	NP
+13	?	?	_	SENT
+
+1	What	What	_	WP
+2	planet	planet	_	NN
+3	are	be	_	VBP
+4	you	you	_	PP
+5	from	from	_	IN
+6	?	?	_	SENT
+
+1	The	the	_	DT
+2	2nd	2nd	_	JJ
+3	amendment	amendment	_	NN
+4	is	be	_	VBZ
+5	dead	dead	_	JJ
+6	.	.	_	SENT
+
+1	Accept	accept	_	VB
+2	this	this	_	DT
+3	.	.	_	SENT
+
+1	Find	find	_	VB
+2	another	another	_	DT
+3	way	way	_	NN
+4	.	.	_	SENT
+
+1	Wrong	wrong	_	JJ
+2	...	...	_	:
+3	Not	not	_	RB
+4	as	as	_	RB
+5	long	long	_	JJ
+6	as	as	_	IN
+7	freedom	freedom	_	NN
+8	remains	remain	_	VBZ
+9	.	.	_	SENT
+
+1	.	.	_	SENT
+
+1	PS	PS	_	NP
+2	:	:	_	:
+3	Get	get	_	VB
+4	a	a	_	DT
+5	Dictionary.	<unknown>	_	NP
+6	.	.	_	SENT
+
+1	Faustus	Faustus	_	NP
+2	(	(	_	(
+3	Gun	Gun	_	NP
+4	of	of	_	IN
+5	the	the	_	DT
+6	month	month	_	NN
+7	club	club	_	NN
+8	...	...	_	:
+9	hmmm.	<unknown>	_	JJ
+10	.	.	_	SENT
+
+1	Glock	Glock	_	NP
+2	10mm	<unknown>	_	NP
+3	this	this	_	DT
+4	month.	<unknown>	_	NN
+5	.	.	_	SENT
+
+1	Sig	Sig	_	NP
+2	226	@card@	_	NP
+3	next.	<unknown>	_	NP
+4	.	.	_	SENT
+
+1	)	)	_	)

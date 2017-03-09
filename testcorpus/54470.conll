@@ -1,0 +1,64 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	ATF	ATF	_	NP
+6	BURNS	Burns	_	NP
+7	DIVIDIAN	<unknown>	_	NP
+8	RANCH	Ranch	_	NP
+9	-	-	_	:
+10	UPDATE	<unknown>	_	NP
+11	NUT	<unknown>	_	NP
+12	CASE	Case	_	NP
+13	PANICS	<unknown>	_	NP
+14	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!REALIZES	<unknown>	_	VBZ
+2	HE	He	_	NP
+3	'S	's	_	POS
+4	MADE	made	_	JJ
+5	A	A	_	NP
+6	COMPLETE	<unknown>	_	NP
+7	FOOL	<unknown>	_	NP
+8	OF	of	_	IN
+9	HIMSELF	<unknown>	_	NP
+10	IN	in	_	IN
+11	FRONT	Front	_	NP
+12	OF	of	_	IN
+13	THOUSANDS	<unknown>	_	NP
+14	OF	of	_	IN
+15	NETTERS	Netters	_	NP
+16	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!BACKS	<unknown>	_	NNS
+2	AWAY	<unknown>	_	JJ
+3	FROM	From	_	NP
+4	EARLIER	<unknown>	_	NP
+5	RASH	Rash	_	NP
+6	STATEMENTS	<unknown>	_	NP
+7	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!GOD	<unknown>	_	NP
+2	HAVE	Have	_	NP
+3	MERCY	Mercy	_	NP
+4	ON	ON	_	NP
+5	HIM	<unknown>	_	NP
+6	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT

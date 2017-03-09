@@ -1,0 +1,14 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	Waco	Waco	_	NP
+6	aflame	aflame	_	JJ
+7	ABOLISH	<unknown>	_	NP
+8	CULTS	<unknown>	_	NP
+9	!	!	_	SENT
+
+1	START	start	_	VB
+2	WITH	<unknown>	_	NP
+3	THE	THE	_	NP
+4	F.B.I.	<unknown>	_	NP

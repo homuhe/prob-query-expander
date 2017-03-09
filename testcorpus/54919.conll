@@ -1,0 +1,131 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	ATF	ATF	_	NP
+6	BURNS	Burns	_	NP
+7	DIVIDIAN	<unknown>	_	NP
+8	RANCH	Ranch	_	NP
+9	!	!	_	SENT
+
+1	NO	no	_	DT
+2	SURVIVORS	<unknown>	_	NP
+3	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	Let	let	_	VB
+2	's	be	_	VBZ
+3	discuss	discuss	_	VB
+4	Reno	Reno	_	NP
+5	's	's	_	POS
+6	taking	take	_	VBG
+7	full	full	_	JJ
+8	responciblity	<unknown>	_	NN
+9	.	.	_	SENT
+
+1	Is	be	_	VBZ
+2	everyone	everyone	_	NN
+3	happy	happy	_	JJ
+4	with	with	_	IN
+5	the	the	_	DT
+6	outcome	outcome	_	NN
+7	?	?	_	SENT
+
+1	Did	do	_	VBD
+2	the	the	_	DT
+3	FBI	FBI	_	NP
+4	pursue	pursue	_	VB
+5	the	the	_	DT
+6	correct	correct	_	JJ
+7	course	course	_	NN
+8	of	of	_	IN
+9	action	action	_	NN
+10	?	?	_	SENT
+
+1	was	be	_	VBD
+2	justice	justice	_	NN
+3	done	do	_	VBN
+4	?	?	_	SENT
+
+1	If	if	_	IN
+2	Reno	Reno	_	NP
+3	really	really	_	RB
+4	meant	mean	_	VBD
+5	what	what	_	WP
+6	she	she	_	PP
+7	said	say	_	VBD
+8	she	she	_	PP
+9	would	would	_	MD
+10	resign	resign	_	VB
+11	!	!	_	SENT
+
+1	She	she	_	PP
+2	is	be	_	VBZ
+3	just	just	_	RB
+4	grand	grand	_	JJ
+5	standing	standing	_	NN
+6	,	,	_	,
+7	period	period	_	NN
+8	.	.	_	SENT
+
+1	What	What	_	WP
+2	did	do	_	VBD
+3	those	those	_	DT
+4	people	people	_	NNS
+5	do	do	_	VBP
+6	wrong	wrong	_	JJ
+7	in	in	_	IN
+8	the	the	_	DT
+9	first	first	_	JJ
+10	place	place	_	NN
+11	?	?	_	SENT
+
+1	that	that	_	DT
+2	is	be	_	VBZ
+3	what	what	_	WP
+4	i	i	_	NP
+5	ca	ca	_	MD
+6	n't	n't	_	RB
+7	figure	figure	_	VB
+8	out	out	_	RP
+9	.	.	_	SENT
+
+1	sure	sure	_	RB
+2	they	they	_	PP
+3	were	be	_	VBD
+4	crazy	crazy	_	JJ
+5	,	,	_	,
+6	no	no	_	DT
+7	dought	<unknown>	_	NN
+8	about	about	_	IN
+9	it	it	_	PP
+10	,	,	_	,
+11	but	but	_	CC
+12	what	what	_	WP
+13	did	do	_	VBD
+14	they	they	_	PP
+15	do	do	_	VBP
+16	wrong	wrong	_	JJ
+17	?	?	_	SENT
+
+1	someone	someone	_	NN
+2	please	please	_	VBP
+3	help	help	_	VB
+4	me	me	_	PP
+5	out	out	_	RP
+6	on	on	_	IN
+7	this	this	_	DT
+8	.	.	_	SENT
+
+1	jim	<unknown>	_	NN
+2	shirreffs	<unknown>	_	NNS
+3	i	i	_	NNS
+4	speak	speak	_	VBP
+5	for	for	_	IN
+6	myself	myself	_	PP
+7	and	and	_	CC
+8	only	only	_	RB
+9	myself	myself	_	PP

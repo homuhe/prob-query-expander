@@ -1,0 +1,40 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Handgun	handgun	_	NN
+4	Restrictions	restriction	_	NNS
+5	I	I	_	PP
+6	would	would	_	MD
+7	like	like	_	VB
+8	to	to	_	TO
+9	know	know	_	VB
+10	what	what	_	WP
+11	restrictions	restriction	_	NNS
+12	there	there	_	EX
+13	are	be	_	VBP
+14	on	on	_	IN
+15	purchasing	purchasing	_	NN
+16	handguns	handgun	_	NNS
+17	(	(	_	(
+18	ie	<unknown>	_	NN
+19	waiting	waiting	_	NN
+20	periods	period	_	NNS
+21	,	,	_	,
+22	background	background	_	NN
+23	check	check	_	NN
+24	etc.	etc.	_	NN
+25	.	.	_	SENT
+
+1	)	)	_	)
+2	in	in	_	IN
+3	the	the	_	DT
+4	states	state	_	NNS
+5	of	of	_	IN
+6	Nevada	Nevada	_	NP
+7	and	and	_	CC
+8	Oregon	Oregon	_	NP
+9	.	.	_	SENT
+
+1	Thanks	Thank	_	NNS
+2	.	.	_	SENT
+
+1	-Bill	<unknown>	_	NN

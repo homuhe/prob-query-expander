@@ -1,0 +1,97 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	I	I	_	PP
+6	believe	believe	_	VBP
+7	in	in	_	IN
+8	gun	gun	_	NN
+9	control	control	_	NN
+10	.	.	_	SENT
+
+1	I	I	_	PP
+2	believe	believe	_	VBP
+3	in	in	_	IN
+4	gun	gun	_	NN
+5	control	control	_	NN
+6	.	.	_	SENT
+
+1	How	How	_	WRB
+2	about	about	_	RB
+3	you	you	_	PP
+4	?	?	_	SENT
+
+1	I	I	_	PP
+2	believe	believe	_	VBP
+3	in	in	_	IN
+4	gun	gun	_	NN
+5	control	control	_	NN
+6	,	,	_	,
+7	too	too	_	RB
+8	.	.	_	SENT
+
+1	.	.	_	SENT
+
+1	.	.	_	SENT
+
+1	assuming	assume	_	VBG
+2	by	by	_	IN
+3	"	"	_	``
+4	gun	gun	_	NN
+5	control	control	_	NN
+6	"	"	_	``
+7	you	you	_	PP
+8	mean	mean	_	VBP
+9	always	always	_	RB
+10	being	be	_	VBG
+11	able	able	_	JJ
+12	to	to	_	TO
+13	hit	hit	_	VB
+14	your	your	_	PP$
+15	target	target	_	NN
+16	.	.	_	SENT
+
+1	Or	or	_	CC
+2	,	,	_	,
+3	how	how	_	WRB
+4	about	about	_	RB
+5	the	the	_	DT
+6	Clint	Clint	_	NP
+7	Eastwood	Eastwood	_	NP
+8	line	line	_	NN
+9	in	in	_	IN
+10	"	"	_	``
+11	Pink	Pink	_	NP
+12	Cadillac	Cadillac	_	NP
+13	"	"	_	''
+14	-	-	_	:
+15	"	"	_	``
+16	I	I	_	PP
+17	believe	believe	_	VBP
+18	in	in	_	IN
+19	gun	gun	_	NN
+20	control	control	_	NN
+21	.	.	_	SENT
+
+1	If	if	_	IN
+2	there	there	_	EX
+3	's	be	_	VBZ
+4	a	a	_	DT
+5	gun	gun	_	NN
+6	around	around	_	RB
+7	,	,	_	,
+8	I	I	_	PP
+9	wanna	wanna	_	VBP
+10	be	be	_	VB
+11	the	the	_	DT
+12	one	one	_	CD
+13	controlling	control	_	VBG
+14	it	it	_	PP
+15	.	.	_	SENT
+
+1	"	"	_	''
+2	Al	Al	_	NP
+3	[	[	_	SYM
+4	standard	standard	_	JJ
+5	disclaimer	disclaimer	_	NN
+6	]	]	_	SYM

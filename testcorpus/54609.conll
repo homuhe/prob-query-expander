@@ -1,0 +1,28 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	Change	change	_	NN
+6	of	of	_	IN
+7	name	name	_	NN
+8	?	?	_	SENT
+
+1	?	?	_	SENT
+
+1	I	I	_	PP
+2	suggest	suggest	_	VBP
+3	another	another	_	DT
+4	name	name	_	NN
+5	change	change	_	NN
+6	:	:	_	:
+7	Thomas	Thomas	_	NP
+8	Parsli	<unknown>	_	NP
+9	...	...	_	:
+10	.	.	_	SENT
+
+1	to	to	_	TO
+2	...	...	_	:
+3	.	.	_	SENT
+
+1	Vidkun	<unknown>	_	NP
+2	Quisling	<unknown>	_	NP
