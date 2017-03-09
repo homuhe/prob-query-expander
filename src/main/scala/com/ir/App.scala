@@ -8,9 +8,9 @@ object App {
   def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
   
   def main(args : Array[String]) {
-    println( "Hello Wor" +
+    println( "Hello Wor Test1" +
       "vcxvxcld!" )
-    println("concat arguments = " + foo(args))
+    println("concat  Test 2 Test3.2 arguments = " + foo(args))
   }
 
 }
