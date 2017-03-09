@@ -7,15 +7,37 @@ import scala.collection.mutable
   */
 object QueryExpander {
 
-  val unigrams  = mutable.HashMap[String, Int]()
-  val bigrams   = mutable.HashMap[Array[String], Int]()
-  val trigrams  = mutable.HashMap[Array[String], Int]()
+  val stopwords = List("of", "in")
+  val unigrams  = mutable.HashMap[Array[String], Int]()
+  val bigrams   = mutable.HashMap[Array[Array[String]], Int]()
+  val trigrams  = mutable.HashMap[Array[Array[String]], Int]()
 
   class ngram(docID: Int, input: Array[String]) {
-
   }
 
-  def extract_ngrams(input: String) = {
+
+  def extract_ngrams(input: Array[String]) = {
+    var uni = 0
+    var bi  = 0
+    var tri = 0
+
+    var unigram = String
+    var bigram  = Array[String]()
+    var trigram = Array[String]()
+
+
+    for (word <- input) {
+      unigram   = word
+      bigram  :+= word
+      trigram :+= word
+      if (!stopwords.contains(word)) {
+        uni += 1
+        bi  += 1
+        tri += 1
+      }
+      
+
+    }
 
   }
 
