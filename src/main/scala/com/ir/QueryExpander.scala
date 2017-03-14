@@ -3,7 +3,7 @@ package com.ir
 import scala.collection.mutable
 
 /**
-  * Created by holger on 09.03.17.
+  * Created by neele, holger on 09.03.17.
   */
 object QueryExpander {
 
@@ -11,6 +11,7 @@ object QueryExpander {
   val unigrams  = mutable.HashMap[Array[String], List[Int]]()
   val bigrams   = mutable.HashMap[Array[String], List[Int]]()
   val trigrams  = mutable.HashMap[Array[String], List[Int]]()
+  var num_of_docs = 0
 
   class ngram(docID: Int, input: Array[String]) {
   }
@@ -69,11 +70,20 @@ object QueryExpander {
 
   def main(args : Array[String]) {
     val pe = new PhraseExtractor
-    val  f = "testcorpus/53293.conll"
-    val words = pe.preprocessing(f)
-    extract_ngrams(words, stopwords, 122)
-    //println(unigrams.size)
 
+    if (args.length != 1) println("Not enough arguments!")
+    else {
+      val files = new java.io.File(args(0)).listFiles
+      num_of_docs = files.size
+
+      for (file <- files) {
+        val words = pe.preprocessing(file.toString)
+        val id = file.toString.split("/").last.replace(".conll", "").toInt
+
+        println(id)
+        extract_ngrams(words, stopwords, id) //TODO possible error
+      }
+    }
   }
 
 
