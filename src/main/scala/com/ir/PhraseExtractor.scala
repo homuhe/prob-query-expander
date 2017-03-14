@@ -24,6 +24,7 @@ class PhraseExtractor {
     val processed_words = words.filter(!spacePattern.matcher(_).find()).toArray
     processed_words
   }
+
 }
 object PhraseExtractor {
   def main(args: Array[String]): Unit = {
