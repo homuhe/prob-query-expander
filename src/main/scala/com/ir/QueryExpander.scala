@@ -24,8 +24,8 @@ object QueryExpander {
     * @return the IDF as a Float
     */
   def getIDF(term:String) : Float = {
-    val df = unigrams.getOrElse(term(0), 0)
-    val idf = Math.log(num_of_docs/df.toFloat)
+    val df = unigrams.getOrElse(term, List()).length
+    val idf = Math.log(num_of_docs/df).toFloat
   }
 
   /**
@@ -63,7 +63,7 @@ object QueryExpander {
         //put bigram in map
         val value = bigrams.getOrElseUpdate(bigram, List())
         val newvalue = docID::value
-        bigrams.update(unigram, newvalue)
+        bigrams.update(bigram, newvalue)
         //make variable empty
         bigram = Array[String]()
         bi = 0
