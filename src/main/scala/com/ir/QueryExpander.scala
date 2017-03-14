@@ -40,6 +40,12 @@ object QueryExpander {
     candidates.toArray
   }
 
+  /**
+    *
+    * @param input words of document
+    * @param stopwords
+    * @param docID
+    */
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
     var uni = 0
     var bi  = 0
@@ -53,9 +59,9 @@ object QueryExpander {
     for (word <- input) {
       if (uni == 1) {
         //put in map
-        val value = unigrams.getOrElseUpdate(unigram, List())
+        val value = unigrams.getOrElseUpdate(unigram.trim, List())
         val newvalue = docID::value
-        unigrams.update(unigram, newvalue)
+        unigrams.update(unigram.trim, newvalue)
         //make variables empty
         unigram = ""
         uni = 0
@@ -79,7 +85,7 @@ object QueryExpander {
         tri = 0
       }
       //append next word
-      unigram :+= word
+      unigram += " " + word
       bigram  :+= word
       trigram :+= word
       //update counter if word is content word
@@ -103,9 +109,10 @@ object QueryExpander {
         val words = pe.preprocessing(file.toString)
         val id = file.toString.split("/").last.replace(".conll", "").toInt
 
-        println(id)
+        //println(id)
         extract_ngrams(words, stopwords, id) //TODO possible error
       }
+     print(num_of_docs)
     }
   }
 
