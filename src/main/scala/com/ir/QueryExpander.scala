@@ -8,7 +8,7 @@ import scala.collection.mutable
 object QueryExpander {
 
   val stopwords = List("of", "in", "to", "per", "the", "by", "a")
-  val unigrams  = mutable.HashMap[Array[String], List[Int]]()
+  val unigrams  = mutable.HashMap[String, List[Int]]()
   val bigrams   = mutable.HashMap[Array[String], List[Int]]()
   val trigrams  = mutable.HashMap[Array[String], List[Int]]()
 
@@ -16,8 +16,13 @@ object QueryExpander {
   }
 
   def getIDF(term:String) : Float = {
-    val df = unigrams.getOrElse(term, 0
+    val df = unigrams.getOrElse(term(0), 0)
     val idf = Math.log(num_of_docs/df.toFloat)
+  }
+
+  def extract_candidates(start: String): Array[String] = {
+    val candidates = unigrams.keySet.filter(el => el.startsWith(start))
+    candidates.toArray
   }
 
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
@@ -25,7 +30,7 @@ object QueryExpander {
     var bi  = 0
     var tri = 0
 
-    var unigram = Array[String]()
+    var unigram = ""
     var bigram  = Array[String]()
     var trigram = Array[String]()
 
@@ -37,7 +42,7 @@ object QueryExpander {
         val newvalue = docID::value
         unigrams.update(unigram, newvalue)
         //make variables empty
-        unigram = Array[String]()
+        unigram = ""
         uni = 0
       }
       if (bi == 2) {
