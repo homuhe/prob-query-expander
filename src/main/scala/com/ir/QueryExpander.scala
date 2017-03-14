@@ -11,6 +11,9 @@ object QueryExpander {
   val unigrams  = mutable.HashMap[String, List[Int]]()
   val bigrams   = mutable.HashMap[Array[String], List[Int]]()
   val trigrams  = mutable.HashMap[Array[String], List[Int]]()
+
+  val doc2id = mutable.HashMap[Int, Int]()
+
   var num_of_docs = 0
 
   class ngram(docID: Int, input: Array[String]) {
@@ -60,8 +63,7 @@ object QueryExpander {
       if (uni == 1) {
         //put in map
         val value = unigrams.getOrElseUpdate(unigram.trim, List())
-        val newvalue = docID::value
-        unigrams.update(unigram.trim, newvalue)
+        unigrams.update(unigram.trim, docID::value)
         //make variables empty
         unigram = ""
         uni = 0
@@ -107,7 +109,9 @@ object QueryExpander {
 
       for (file <- files) {
         val words = pe.preprocessing(file.toString)
-        val id = file.toString.split("/").last.replace(".conll", "").toInt
+        val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
+
+        doc2id(doc_id) = files.indexOf(file)
 
         //println(id)
         extract_ngrams(words, stopwords, id) //TODO possible error
