@@ -46,8 +46,8 @@ object QueryExpander {
   /**
     *
     * @param input words of document
-    * @param stopwords
-    * @param docID
+    * @param stopwords List of stopwords
+    * @param docID docID of the current document
     */
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
     var uni = 0
@@ -77,8 +77,7 @@ object QueryExpander {
         bigram = Array[String]()
         bi = 0
       }
-      if (tri == 3) {
-        // put trigram in map
+      if (tri == 3) {// put trigram in map
         val value = trigrams.getOrElseUpdate(trigram, List())
         val newvalue = docID::value
         trigrams.update(trigram, newvalue)
