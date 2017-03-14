@@ -8,7 +8,7 @@ import scala.collection.mutable
 object QueryExpander {
 
   val stopwords = List("of", "in", "to", "per", "the", "by", "a")
-  val unigrams  = mutable.HashMap[Array[String], List[Int]]()
+  val unigrams  = mutable.HashMap[String, List[Int]]()
   val bigrams   = mutable.HashMap[Array[String], List[Int]]()
   val trigrams  = mutable.HashMap[Array[String], List[Int]]()
   var num_of_docs = 0
@@ -16,13 +16,35 @@ object QueryExpander {
   class ngram(docID: Int, input: Array[String]) {
   }
 
+  /**
+    * calculates the inverse document frequency for a given term,
+    * can be extracted by using the number of total documents and the number of documents
+    * containing the term
+    * @param term a String
+    * @return the IDF as a Float
+    */
+  def getIDF(term:String) : Float = {
+    val df = unigrams.getOrElse(term, List()).length
+    val idf = Math.log(num_of_docs/df).toFloat
+  }
+
+  /**
+    * for a given query word this method extracts all words that are possible word completions of that
+    * query word
+    * @param start a String = query word
+    * @return an Array of Strings that contains the candidate word completions
+    */
+  def extract_candidates(start: String): Array[String] = {
+    val candidates = unigrams.keySet.filter(el => el.startsWith(start))
+    candidates.toArray
+  }
 
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
     var uni = 0
     var bi  = 0
     var tri = 0
 
-    var unigram = Array[String]()
+    var unigram = ""
     var bigram  = Array[String]()
     var trigram = Array[String]()
 
@@ -34,14 +56,14 @@ object QueryExpander {
         val newvalue = docID::value
         unigrams.update(unigram, newvalue)
         //make variables empty
-        unigram = Array[String]()
+        unigram = ""
         uni = 0
       }
       if (bi == 2) {
         //put bigram in map
         val value = bigrams.getOrElseUpdate(bigram, List())
         val newvalue = docID::value
-        bigrams.update(unigram, newvalue)
+        bigrams.update(bigram, newvalue)
         //make variable empty
         bigram = Array[String]()
         bi = 0
