@@ -15,11 +15,24 @@ object QueryExpander {
   class ngram(docID: Int, input: Array[String]) {
   }
 
+  /**
+    * calculates the inverse document frequency for a given term,
+    * can be extracted by using the number of total documents and the number of documents
+    * containing the term
+    * @param term a String
+    * @return the IDF as a Float
+    */
   def getIDF(term:String) : Float = {
     val df = unigrams.getOrElse(term(0), 0)
     val idf = Math.log(num_of_docs/df.toFloat)
   }
 
+  /**
+    * for a given query word this method extracts all words that are possible word completions of that
+    * query word
+    * @param start a String = query word
+    * @return an Array of Strings that contains the candidate word completions
+    */
   def extract_candidates(start: String): Array[String] = {
     val candidates = unigrams.keySet.filter(el => el.startsWith(start))
     candidates.toArray
