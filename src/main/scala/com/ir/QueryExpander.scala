@@ -66,9 +66,10 @@ object QueryExpander {
         }
         else {
           val doclist = unigrams(unigram.trim)
-          val doc_freqpair = unigrams(unigram.trim).filter(el => el.head == docID)
-          val newdoclist = doclist(doclist.indexOf(doc_freqpair))(1)+1
-          unigrams.update(unigram.trim, newdoclist)
+          val doc_freqpair = unigrams(unigram.trim).filter(el => el.head == docID).flatten
+          val index = doclist.indexOf(doc_freqpair)
+          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
+          unigrams.update(unigram.trim, doclist)
         }
         //make variables empty
         unigram = ""
@@ -80,14 +81,11 @@ object QueryExpander {
           bigrams.put(bigram, Array(Array(docID, 1)))
         }
         else {
-          val docList= bigrams(bigram)
-          var newdoclist = docList
-          docList.foreach { doc_freqpair =>
-            doc_freqpair match {
-              case Array(`docID`, freq) => newdoclist(docList.indexOf(doc_freqpair)) = Array(doc_freqpair(0),doc_freqpair(1)+1)
-              case Array(docnumber, freq) => newdoclist:+=Array(docID, 1)
-            }}
-          bigrams.update(bigram, newdoclist)
+          val doclist = bigrams(bigram)
+          val doc_freqpair = bigrams(bigram).filter(_ == docID).flatten
+          val index = doclist.indexOf(doc_freqpair)
+          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
+          bigrams.update(bigram, doclist)
         }
         //make variable empty
         bigram = Array[String]()
@@ -98,14 +96,11 @@ object QueryExpander {
           trigrams.put(trigram, Array(Array(docID, 1)))
         }
         else {
-          val docList= trigrams(trigram)
-          var newdoclist = docList
-          docList.foreach { doc_freqpair =>
-            doc_freqpair match {
-              case Array(`docID`, freq) => newdoclist(docList.indexOf(doc_freqpair)) = Array(doc_freqpair(0),doc_freqpair(1)+1)
-              case Array(docnumber, freq) => newdoclist:+=Array(docID, 1)
-            }}
-          trigrams.update(trigram, newdoclist)
+          val doclist = trigrams(trigram)
+          val doc_freqpair = trigrams(trigram).filter(_== docID).flatten
+          val index = doclist.indexOf(doc_freqpair)
+          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
+          trigrams.update(trigram, doclist)
         }
         //make variable empty
         trigram = Array[String]()
