@@ -8,11 +8,9 @@ import scala.collection.mutable
 object QueryExpander {
 
   val stopwords = List("of", "in", "to", "per", "the", "by", "a")
-  val unigrams  = mutable.HashMap[String, List[Int]]()
-  val bigrams   = mutable.HashMap[Array[String], List[Int]]()
-  val trigrams  = mutable.HashMap[Array[String], List[Int]]()
-
-  val doc2id = mutable.HashMap[Int, Int]()
+  val unigrams  = mutable.HashMap[String, Array[Array[Int]]]()
+  val bigrams   = mutable.HashMap[Array[String], Array[Array[Int]]]()
+  val trigrams  = mutable.HashMap[Array[String], Array[Array[Int]]]()
 
   var num_of_docs = 0
 
@@ -27,7 +25,7 @@ object QueryExpander {
     * @return the IDF as a Float
     */
   def getIDF(term:String) : Float = {
-    val df = unigrams.getOrElse(term, List()).length
+    val df = unigrams.getOrElse(term, Array()).length
     val idf = Math.log(num_of_docs/df).toFloat
     idf
   }
@@ -46,10 +44,11 @@ object QueryExpander {
   /**
     *
     * @param input words of document
-    * @param stopwords
-    * @param docID
+    * @param stopwords List of stopwords
+    * @param docID docID of the current document
     */
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
+
     var uni = 0
     var bi  = 0
     var tri = 0
@@ -62,26 +61,47 @@ object QueryExpander {
     for (word <- input) {
       if (uni == 1) {
         //put in map
-        val value = unigrams.getOrElseUpdate(unigram.trim, List())
-        unigrams.update(unigram.trim, docID::value)
+        if (!unigrams.contains(unigram.trim)){
+          unigrams.put(unigram.trim, Array(Array(docID, 1)))
+        }
+        else {
+          val doclist = unigrams(unigram.trim)
+          val doc_freqpair = unigrams(unigram.trim).filter(el => el.head == docID).flatten
+          val index = doclist.indexOf(doc_freqpair)
+          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
+          unigrams.update(unigram.trim, doclist)
+        }
         //make variables empty
         unigram = ""
         uni = 0
       }
       if (bi == 2) {
         //put bigram in map
-        val value = bigrams.getOrElseUpdate(bigram, List())
-        val newvalue = docID::value
-        bigrams.update(bigram, newvalue)
+        if (!bigrams.contains(bigram)){
+          bigrams.put(bigram, Array(Array(docID, 1)))
+        }
+        else {
+          val doclist = bigrams(bigram)
+          val doc_freqpair = bigrams(bigram).filter(_ == docID).flatten
+          val index = doclist.indexOf(doc_freqpair)
+          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
+          bigrams.update(bigram, doclist)
+        }
         //make variable empty
         bigram = Array[String]()
         bi = 0
       }
-      if (tri == 3) {
-        // put trigram in map
-        val value = trigrams.getOrElseUpdate(trigram, List())
-        val newvalue = docID::value
-        trigrams.update(trigram, newvalue)
+      if (tri == 3) {// put trigram in map
+        if (!trigrams.contains(trigram)){
+          trigrams.put(trigram, Array(Array(docID, 1)))
+        }
+        else {
+          val doclist = trigrams(trigram)
+          val doc_freqpair = trigrams(trigram).filter(_== docID).flatten
+          val index = doclist.indexOf(doc_freqpair)
+          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
+          trigrams.update(trigram, doclist)
+        }
         //make variable empty
         trigram = Array[String]()
         tri = 0
@@ -111,10 +131,9 @@ object QueryExpander {
         val words = pe.preprocessing(file.toString)
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
-        doc2id(doc_id) = files.indexOf(file)
 
         //println(id)
-        extract_ngrams(words, stopwords, id) //TODO possible error
+        extract_ngrams(words, stopwords, doc_id) //TODO possible error
       }
      print(num_of_docs)
     }
