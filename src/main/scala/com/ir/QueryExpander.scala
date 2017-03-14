@@ -26,6 +26,7 @@ object QueryExpander {
   def getIDF(term:String) : Float = {
     val df = unigrams.getOrElse(term, List()).length
     val idf = Math.log(num_of_docs/df).toFloat
+    idf
   }
 
   /**
