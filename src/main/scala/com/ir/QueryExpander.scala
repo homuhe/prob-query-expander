@@ -15,6 +15,10 @@ object QueryExpander {
   class ngram(docID: Int, input: Array[String]) {
   }
 
+  def getIDF(term:String) : Float = {
+    val df = unigrams.getOrElse(term, 0
+    val idf = Math.log(num_of_docs/df.toFloat)
+  }
 
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
     var uni = 0
