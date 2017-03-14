@@ -11,6 +11,7 @@ object QueryExpander {
   val unigrams  = mutable.HashMap[String, List[Int]]()
   val bigrams   = mutable.HashMap[Array[String], List[Int]]()
   val trigrams  = mutable.HashMap[Array[String], List[Int]]()
+  val docToID = mutable.HashMap[Int, Int]()
   var num_of_docs = 0
 
   class ngram(docID: Int, input: Array[String]) {
@@ -43,8 +44,8 @@ object QueryExpander {
   /**
     *
     * @param input words of document
-    * @param stopwords
-    * @param docID
+    * @param stopwords List of stopwords
+    * @param docID docID of the current document
     */
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
     var uni = 0
@@ -61,7 +62,7 @@ object QueryExpander {
         //put in map
         val value = unigrams.getOrElseUpdate(unigram.trim, List())
         val newvalue = docID::value
-        unigrams.update(unigram.trim, newvalue)
+        unigrams.update(unigram.trim, docID::value)
         //make variables empty
         unigram = ""
         uni = 0
@@ -75,8 +76,7 @@ object QueryExpander {
         bigram = Array[String]()
         bi = 0
       }
-      if (tri == 3) {
-        // put trigram in map
+      if (tri == 3) {// put trigram in map
         val value = trigrams.getOrElseUpdate(trigram, List())
         val newvalue = docID::value
         trigrams.update(trigram, newvalue)
