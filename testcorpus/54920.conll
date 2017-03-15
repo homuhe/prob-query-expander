@@ -1,0 +1,127 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	ATF	ATF	_	NP
+6	BURNS	Burns	_	NP
+7	DIVIDIAN	<unknown>	_	NP
+8	RANCH	Ranch	_	NP
+9	!	!	_	SENT
+
+1	NO	no	_	DT
+2	SURVIVORS	<unknown>	_	NP
+3	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	|>	<unknown>	_	NN
+2	If	if	_	IN
+3	the	the	_	DT
+4	FBI	FBI	_	NP
+5	started	start	_	VBD
+6	the	the	_	DT
+7	fire	fire	_	NN
+8	,	,	_	,
+9	why	why	_	WRB
+10	didn`t	<unknown>	_	NN
+11	people	people	_	NNS
+12	flee	flee	_	VB
+13	the	the	_	DT
+14	|>	<unknown>	_	JJ
+15	burning	burning	_	NN
+16	building	building	_	NN
+17	?	?	_	SENT
+
+1	|>	<unknown>	_	JJ
+2	|>	<unknown>	_	NN
+3	James	James	_	NP
+4	Dusek	Dusek	_	NP
+5	James	James	_	NP
+6	,	,	_	,
+7	it	it	_	PP
+8	could	could	_	MD
+9	be	be	_	VB
+10	that	that	_	IN
+11	they	they	_	PP
+12	were	be	_	VBD
+13	determined	determine	_	VBN
+14	to	to	_	TO
+15	stay	stay	_	VB
+16	together	together	_	RB
+17	in	in	_	IN
+18	the	the	_	DT
+19	compound	compound	_	NN
+20	no	no	_	DT
+21	matter	matter	_	NN
+22	what	what	_	WP
+23	happened	happen	_	VBD
+24	.	.	_	SENT
+
+1	Perhaps	perhaps	_	RB
+2	the	the	_	DT
+3	fire	fire	_	NN
+4	was	be	_	VBD
+5	accidental	accidental	_	JJ
+6	,	,	_	,
+7	and	and	_	CC
+8	the	the	_	DT
+9	DB	DB	_	NP
+10	simply	simply	_	RB
+11	refused	refuse	_	VBD
+12	to	to	_	TO
+13	leave	leave	_	VB
+14	the	the	_	DT
+15	compod	<unknown>	_	NN
+16	.	.	_	SENT
+
+1	Perhap	<unknown>	_	NP
+2	they	they	_	PP
+3	died	die	_	VBD
+4	fighting	fight	_	VBG
+5	the	the	_	DT
+6	fire	fire	_	NN
+7	?	?	_	SENT
+
+1	who	who	_	WP
+2	knows	know	_	VBZ
+3	.	.	_	SENT
+
+1	we	we	_	PP
+2	will	will	_	MD
+3	have	have	_	VB
+4	to	to	_	TO
+5	wait	wait	_	VB
+6	and	and	_	CC
+7	see	see	_	VB
+8	.	.	_	SENT
+
+1	i	i	_	NP
+2	persaonlly	<unknown>	_	RB
+3	find	find	_	VBP
+4	it	it	_	PP
+5	hard	hard	_	JJ
+6	to	to	_	TO
+7	believe	believe	_	VB
+8	that	that	_	IN
+9	they	they	_	PP
+10	would	would	_	MD
+11	all	all	_	RB
+12	agree	agree	_	VB
+13	to	to	_	TO
+14	burn	burn	_	VB
+15	themselves	themselves	_	PP
+16	up	up	_	RP
+17	!	!	_	SENT
+
+1	what	what	_	WP
+2	a	a	_	DT
+3	horrible	horrible	_	JJ
+4	way	way	_	NN
+5	to	to	_	TO
+6	go	go	_	VB
+7	.	.	_	SENT
+
+1	jim	<unknown>	_	NN
+2	shirreffs	<unknown>	_	NNS

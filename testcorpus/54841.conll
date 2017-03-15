@@ -1,0 +1,73 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	AP	AP	_	NP
+4	rifles	rifle	_	NNS
+5	?	?	_	SENT
+
+1	I	I	_	PP
+2	just	just	_	RB
+3	read	read	_	VBP
+4	a	a	_	DT
+5	clari	<unknown>	_	NN
+6	article	article	_	NN
+7	about	about	_	RB
+8	how	how	_	WRB
+9	,	,	_	,
+10	among	among	_	IN
+11	the	the	_	DT
+12	other	other	_	JJ
+13	weapons	weapon	_	NNS
+14	the	the	_	DT
+15	BD	<unknown>	_	NN
+16	had	have	_	VBD
+17	purched	<unknown>	_	VBN
+18	,	,	_	,
+19	they	they	_	PP
+20	had	have	_	VBD
+21	two	two	_	CD
+22	"	"	_	``
+23	Barrett	Barrett	_	NP
+24	50-caliber	<unknown>	_	NP
+25	armor-piercing	armor-pierce	_	VBG
+26	rifles	rifle	_	NNS
+27	.	.	_	SENT
+
+1	"	"	_	``
+2	How	How	_	WRB
+3	the	the	_	DT
+4	hell	hell	_	NN
+5	do	do	_	VBP
+6	you	you	_	PP
+7	use	use	_	VB
+8	an	an	_	DT
+9	armor-piercing	armor-pierce	_	VBG
+10	rifle	rifle	_	NN
+11	?	?	_	SENT
+
+1	Run	run	_	VBN
+2	up	up	_	RP
+3	to	to	_	TO
+4	a	a	_	DT
+5	tank	tank	_	NN
+6	and	and	_	CC
+7	try	try	_	VB
+8	to	to	_	TO
+9	stab	stab	_	VB
+10	it	it	_	PP
+11	?	?	_	SENT
+
+1	Once	once	_	RB
+2	again	again	_	RB
+3	,	,	_	,
+4	ignorance	ignorance	_	NN
+5	prevails	prevail	_	VBZ
+6	amongst	amongst	_	IN
+7	the	the	_	DT
+8	media	medium	_	NNS
+9	.	.	_	SENT
+
+1	.	.	_	SENT
+
+1	.	.	_	SENT
+
+1	aaron	<unknown>	_	NN

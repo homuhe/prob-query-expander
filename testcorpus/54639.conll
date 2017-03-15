@@ -1,0 +1,102 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	WACO	Waco	_	NP
+6	:	:	_	:
+7	Clinton	Clinton	_	NP
+8	press	press	_	NN
+9	conference	conference	_	NN
+10	,	,	_	,
+11	part	part	_	NN
+12	1	1	_	CD
+13	I	I	_	PP
+14	was	be	_	VBD
+15	hoping	hope	_	VBG
+16	that	that	_	IN
+17	Kent	Kent	_	NP
+18	State	State	_	NP
+19	taught	teach	_	VBD
+20	us	us	_	PP
+21	a	a	_	DT
+22	lesson	lesson	_	NN
+23	.	.	_	SENT
+
+1	Apparently	apparently	_	RB
+2	not	not	_	RB
+3	.	.	_	SENT
+
+1	Apparently	apparently	_	RB
+2	the	the	_	DT
+3	government	government	_	NN
+4	will	will	_	MD
+5	murder	murder	_	VB
+6	anyone	anyone	_	NN
+7	they	they	_	PP
+8	choose	choose	_	VBP
+9	to	to	_	TO
+10	still	still	_	RB
+11	.	.	_	SENT
+
+1	That	that	_	DT
+2	's	be	_	VBZ
+3	right	right	_	JJ
+4	.	.	_	SENT
+
+1	Despite	despite	_	IN
+2	claims	claim	_	NNS
+3	that	that	_	IN
+4	someone	someone	_	NN
+5	at	at	_	IN
+6	Kent	Kent	_	NP
+7	State	State	_	NP
+8	fire	fire	_	NN
+9	a	a	_	DT
+10	shotgun	shotgun	_	NN
+11	at	at	_	IN
+12	the	the	_	DT
+13	the	the	_	DT
+14	soldiers	soldier	_	NNS
+15	,	,	_	,
+16	the	the	_	DT
+17	only	only	_	JJ
+18	projectiles	projectile	_	NNS
+19	that	that	_	IN
+20	anyone	anyone	_	NN
+21	can	can	_	MD
+22	prove	prove	_	VB
+23	where	where	_	WRB
+24	sent	send	_	VBN
+25	in	in	_	IN
+26	the	the	_	DT
+27	direction	direction	_	NN
+28	of	of	_	IN
+29	the	the	_	DT
+30	soldiers	soldier	_	NNS
+31	were	be	_	VBD
+32	rocks	rock	_	NNS
+33	.	.	_	SENT
+
+1	John	John	_	NP
+2	F.	F.	_	NP
+3	Haugh	Haugh	_	NP
+4	II	II	_	NP
+5	[	[	_	SYM
+6	PGP	<unknown>	_	NP
+7	2.1	@card@	_	CD
+8	]	]	_	SYM
+9	!	!	_	SENT
+
+1	'	'	_	''
+2	s	<unknown>	_	NNS
+3	:	:	_	:
+4	...	...	_	:
+5	!	!	_	SENT
+
+1	cs.utexas.edu	<unknown>	_	NN
+2	!	!	_	SENT
+
+1	rpp386	<unknown>	_	NN
+2	!	!	_	SENT
+
+1	jfh	<unknown>	_	NP

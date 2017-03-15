@@ -1,0 +1,33 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	WACO	Waco	_	NP
+6	:	:	_	:
+7	The	the	_	DT
+8	Militia	<unknown>	_	NP
+9	Assembles	<unknown>	_	NP
+10	Dumb	<unknown>	_	NP
+11	move	move	_	NN
+12	.	.	_	SENT
+
+1	The	the	_	DT
+2	smart	smart	_	JJ
+3	move	move	_	NN
+4	would	would	_	MD
+5	be	be	_	VB
+6	to	to	_	TO
+7	sneak	sneak	_	VB
+8	in	in	_	IN
+9	someone	someone	_	NN
+10	with	with	_	IN
+11	a	a	_	DT
+12	TV	TV	_	NN
+13	camera	camera	_	NN
+14	and	and	_	CC
+15	video	video	_	NN
+16	transmitter	transmitter	_	NN
+17	.	.	_	SENT
+
+1	John	John	_	NP
+2	Nagle	Nagle	_	NP

@@ -1,0 +1,157 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	Guns	gun	_	NNS
+6	GONE	<unknown>	_	NNS
+7	.	.	_	SENT
+
+1	Good	good	_	JJ
+2	Riddance	riddance	_	NN
+3	!	!	_	SENT
+
+1	Ah	ah	_	UH
+2	I	I	_	PP
+3	love	love	_	VBP
+4	posts	post	_	NNS
+5	like	like	_	IN
+6	this	this	_	DT
+7	.	.	_	SENT
+
+1	Many	many	_	JJ
+2	people	people	_	NNS
+3	have	have	_	VBP
+4	already	already	_	RB
+5	replied	reply	_	VBN
+6	to	to	_	TO
+7	this	this	_	DT
+8	one	one	_	CD
+9	as	as	_	IN
+10	I	I	_	PP
+11	knew	know	_	VBD
+12	they	they	_	PP
+13	would	would	_	MD
+14	.	.	_	SENT
+
+1	I	I	_	PP
+2	'm	be	_	VBP
+3	not	not	_	RB
+4	going	go	_	VBG
+5	to	to	_	TO
+6	say	say	_	VB
+7	much	much	_	RB
+8	as	as	_	IN
+9	this	this	_	DT
+10	just	just	_	RB
+11	seems	seem	_	VBZ
+12	like	like	_	IN
+13	baiting	bait	_	VBG
+14	to	to	_	TO
+15	me	me	_	PP
+16	.	.	_	SENT
+
+1	Someone	someone	_	NN
+2	decided	decide	_	VBD
+3	to	to	_	TO
+4	post	post	_	VB
+5	to	to	_	TO
+6	see	see	_	VB
+7	how	how	_	WRB
+8	many	many	_	JJ
+9	people	people	_	NNS
+10	would	would	_	MD
+11	get	get	_	VB
+12	mad	mad	_	JJ
+13	and	and	_	CC
+14	reply	reply	_	NN
+15	.	.	_	SENT
+
+1	I	I	_	PP
+2	am	be	_	VBP
+3	just	just	_	RB
+4	going	go	_	VBG
+5	to	to	_	TO
+6	ignore	ignore	_	VB
+7	it	it	_	PP
+8	but	but	_	CC
+9	I	I	_	PP
+10	do	do	_	VBP
+11	have	have	_	VB
+12	one	one	_	CD
+13	thing	thing	_	NN
+14	to	to	_	TO
+15	say	say	_	VB
+16	.	.	_	SENT
+
+1	See	see	_	VB
+2	below	below	_	RB
+3	.	.	_	SENT
+
+1	Surrender	surrender	_	VB
+2	your	your	_	PP$
+3	arms	arm	_	NNS
+4	.	.	_	SENT
+
+1	Soon	soon	_	RB
+2	enough	enough	_	RB
+3	,	,	_	,
+4	officers	officer	_	NNS
+5	will	will	_	MD
+6	be	be	_	VB
+7	around	around	_	RB
+8	to	to	_	TO
+9	collect	collect	_	VB
+10	them	them	_	PP
+11	.	.	_	SENT
+
+1	Resistance	resistance	_	NN
+2	is	be	_	VBZ
+3	useless	useless	_	JJ
+4	.	.	_	SENT
+
+1	They	they	_	PP
+2	will	will	_	MD
+3	overwhelm	overwhelm	_	VB
+4	you	you	_	PP
+5	-	-	_	:
+6	one	one	_	CD
+7	at	at	_	IN
+8	a	a	_	DT
+9	time	time	_	NN
+10	.	.	_	SENT
+
+1	^^^^^^^^^^^^^^^^^^^^^	<unknown>	_	NP
+2	Listen	<unknown>	_	NP
+3	buddy	buddy	_	NN
+4	,	,	_	,
+5	if	if	_	IN
+6	you	you	_	PP
+7	're	be	_	VBP
+8	going	go	_	VBG
+9	to	to	_	TO
+10	quote	quote	_	VB
+11	Star	Star	_	NP
+12	Trek	Trek	_	NP
+13	get	get	_	VB
+14	the	the	_	DT
+15	quote	quote	_	NN
+16	right	right	_	NN
+17	.	.	_	SENT
+
+1	It	it	_	PP
+2	was	be	_	VBD
+3	"	"	_	``
+4	Resistance	Resistance	_	NP
+5	is	be	_	VBZ
+6	futile	futile	_	JJ
+7	"	"	_	''
+8	.	.	_	SENT
+
+1	Get	get	_	VB
+2	it	it	_	PP
+3	right	right	_	RB
+4	the	the	_	DT
+5	next	next	_	JJ
+6	time	time	_	NN
+7	:-	<unknown>	_	NN
+8	)	)	_	)

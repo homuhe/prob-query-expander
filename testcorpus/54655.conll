@@ -1,0 +1,110 @@
+1	Subject	subject	_	NN
+2	:	:	_	:
+3	Re	Re	_	NP
+4	:	:	_	:
+5	ATF	ATF	_	NP
+6	BURNS	Burns	_	NP
+7	DIVIDIAN	<unknown>	_	NP
+8	RANCH	Ranch	_	NP
+9	!	!	_	SENT
+
+1	NO	no	_	DT
+2	SURVIVORS	<unknown>	_	NP
+3	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	!	!	_	SENT
+
+1	napalm	napalm	_	NN
+2	,	,	_	,
+3	then	then	_	RB
+4	let	let	_	VB
+5	the	the	_	DT
+6	wood	wood	_	NN
+7	stove	stove	_	VBP
+8	inside	inside	_	RB
+9	ignite	ignite	_	VB
+10	it	it	_	PP
+11	.	.	_	SENT
+
+1	^^^^^^^^^^^^^^^^^^^^^^^^^^^^	<unknown>	_	NN
+2	As	as	_	IN
+3	someone	someone	_	NN
+4	else	else	_	RB
+5	has	have	_	VBZ
+6	pointed	point	_	VBN
+7	out	out	_	RP
+8	,	,	_	,
+9	why	why	_	WRB
+10	would	would	_	MD
+11	the	the	_	DT
+12	stove	stove	_	NN
+13	be	be	_	VB
+14	in	in	_	IN
+15	use	use	_	NN
+16	on	on	_	IN
+17	a	a	_	DT
+18	warm	warm	_	JJ
+19	day	day	_	NN
+20	in	in	_	IN
+21	Texas	Texas	_	NP
+22	.	.	_	SENT
+
+1	Do	do	_	VB
+2	YOU	you	_	PP
+3	eat	eat	_	VB
+4	all	all	_	PDT
+5	your	your	_	PP$
+6	food	food	_	NN
+7	cold	cold	_	NN
+8	?	?	_	SENT
+
+1	Ever	ever	_	RB
+2	hear	hear	_	VB
+3	of	of	_	IN
+4	electric	electric	_	JJ
+5	ovens	oven	_	NNS
+6	or	or	_	CC
+7	microwaves	microwave	_	NNS
+8	?	?	_	SENT
+
+1	Very	very	_	RB
+2	popular	popular	_	JJ
+3	.	.	_	SENT
+
+1	Electric	Electric	_	NP
+2	stoves	stove	_	VBZ
+3	outside	outside	_	JJ
+4	metro-areas	<unknown>	_	NNS
+5	especially	especially	_	RB
+6	.	.	_	SENT
+
+1	Ever	ever	_	RB
+2	hear	hear	_	VB
+3	about	about	_	IN
+4	cutting	cut	_	VBG
+5	off	off	_	RP
+6	the	the	_	DT
+7	electricity	electricity	_	NN
+8	?	?	_	SENT
+
+1	That	that	_	DT
+2	was	be	_	VBD
+3	done	do	_	VBN
+4	.	.	_	SENT
+
+1	How	How	_	WRB
+2	effective	effective	_	NN
+3	is	be	_	VBZ
+4	an	an	_	DT
+5	electric	electric	_	JJ
+6	stove	stove	_	NN
+7	then	then	_	RB
+8	?	?	_	SENT
+
+1	Al	Al	_	NP
+2	[	[	_	SYM
+3	standard	standard	_	JJ
+4	disclaimer	disclaimer	_	NN
+5	]	]	_	SYM
