@@ -175,18 +175,19 @@ object QueryExpander {
         val words = pe.preprocessing(file.toString)
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
-
         println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        //extract_ngrams("This is House of Cards".split(" "), stopwords, doc_id)
+        //extract_ngrams(words, stopwords, doc_id)
       }
+
+
       println(num_of_docs)
       extract_ngrams("This is House of Cards. The new House of Cards. House of Cards.".split(" "), stopwords, 1)
-
+      //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), stopwords, 1)
 
       for (unigram <- unigrams) {
-        print("unigram <" + unigram._1 + ">\t\t")
-        for (freqpair <- unigram._2)
-          println("in doc " + freqpair(0) + " with frequency " + freqpair(1))
+        println("<" + unigram._1 + "> ")
+        for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
+        println()
       }
     }
   }
