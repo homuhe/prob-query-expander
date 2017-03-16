@@ -76,7 +76,7 @@ object QueryExpander {
         bigram = Array()
         trigram = Array()
         while (gramCounter != 3) {
-          if (gramIndex+i<input.length-1) {
+          if (gramIndex+i<input.length) {
 
             if (gramCounter == 2) {
               update_nGram_Map(bigram.mkString(" "), bigrams, docID)
