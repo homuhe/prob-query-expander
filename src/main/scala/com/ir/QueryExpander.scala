@@ -14,9 +14,6 @@ object QueryExpander {
 
   var num_of_docs = 0
 
-  class ngram(docID: Int, input: Array[String]) {
-  }
-
   /**
     * calculates the inverse document frequency for a given term,
     * can be extracted by using the number of total documents and the number of documents
@@ -41,6 +38,9 @@ object QueryExpander {
     candidates.toArray
   }
 
+
+
+
   /**
     *
     * @param input words of document
@@ -60,49 +60,93 @@ object QueryExpander {
 
     for (word <- input) {
       if (uni == 1) {
-        //put in map
-        if (!unigrams.contains(unigram.trim)){
-          unigrams.put(unigram.trim, Array(Array(docID, 1)))
-        }
+
+        unigram = unigram.trim
+
+        //case1: unigram not in Map, yet
+        if (!unigrams.contains(unigram))
+          unigrams.put(unigram, Array(Array(docID, 1)))
+        //case2a & 2b: unigram is in Map, occurance either in existing docID or new docID
         else {
-          val doclist = unigrams(unigram.trim)
-          val doc_freqpair = unigrams(unigram.trim).filter(el => el.head == docID).flatten
-          val index = doclist.indexOf(doc_freqpair)
-          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
-          unigrams.update(unigram.trim, doclist)
+          var doclist = unigrams(unigram)
+          var index = 0
+          var new_docID = true
+          //case2a: unigram with existing docID, update frequency in found Array
+          for (freqpair <- unigrams(unigram)) {
+            if (freqpair.head == docID) {
+              doclist.update(index, Array(freqpair(0), freqpair(1)+1))
+              unigrams.update(unigram, doclist)
+              new_docID = false
+            }
+            index += 1
+          }
+          //case2b:
+          if (new_docID) {
+            doclist :+= Array(docID, 1)
+            unigrams.update(unigram, doclist)
+          }
         }
         //make variables empty
         unigram = ""
         uni = 0
       }
+
       if (bi == 2) {
-        //put bigram in map
-        if (!bigrams.contains(bigram)){
+
+        //case1: bigram not in Map, yet
+        if (!bigrams.contains(bigram))
           bigrams.put(bigram, Array(Array(docID, 1)))
-        }
+        //case2a & 2b: bigram is in Map, occurance either in existing docID or new docID
         else {
-          val doclist = bigrams(bigram)
-          val doc_freqpair = bigrams(bigram).filter(_ == docID).flatten
-          val index = doclist.indexOf(doc_freqpair)
-          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
-          bigrams.update(bigram, doclist)
+          var doclist = bigrams(bigram)
+          var index = 0
+          var new_docID = true
+          //case2a: bigram with existing docID, update frequency in found Array
+          for (freqpair <- bigrams(bigram)) {
+            if (freqpair.head == docID) {
+              doclist.update(index, Array(freqpair(0), freqpair(1)+1))
+              bigrams.update(bigram, doclist)
+              new_docID = false
+            }
+            index += 1
+          }
+          //case2b:
+          if (new_docID) {
+            doclist :+= Array(docID, 1)
+            bigrams.update(bigram, doclist)
+          }
         }
-        //make variable empty
+        //make variables empty
         bigram = Array[String]()
         bi = 0
       }
-      if (tri == 3) {// put trigram in map
-        if (!trigrams.contains(trigram)){
+
+      if (tri == 3) {
+
+        //case1: trigram not in Map, yet
+        if (!trigrams.contains(trigram))
           trigrams.put(trigram, Array(Array(docID, 1)))
-        }
+        //case2a & 2b: trigram is in Map, occurance either in existing docID or new docID
         else {
-          val doclist = trigrams(trigram)
-          val doc_freqpair = trigrams(trigram).filter(_== docID).flatten
-          val index = doclist.indexOf(doc_freqpair)
-          doclist.update(index, Array(doc_freqpair(0), doc_freqpair(1)+1))
-          trigrams.update(trigram, doclist)
+          var doclist = trigrams(trigram)
+          var index = 0
+          var new_docID = true
+          //case2a: trigram with existing docID, update frequency in found Array
+          for (freqpair <- trigrams(trigram)) {
+            if (freqpair.head == docID) {
+              doclist.update(index, Array(freqpair(0), freqpair(1)+1))
+              trigrams.update(bigram, doclist)
+              new_docID = false
+            }
+            index += 1
+          }
+          //case2b:
+          if (new_docID) {
+            doclist :+= Array(docID, 1)
+            trigrams.update(trigram, doclist)
+          }
         }
-        //make variable empty
+        //make variables empty
         trigram = Array[String]()
         tri = 0
       }
@@ -131,11 +175,20 @@ object QueryExpander {
         val words = pe.preprocessing(file.toString)
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
-
-        //println(id)
-        extract_ngrams(words, stopwords, doc_id) //TODO possible error
+        println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
+        //extract_ngrams(words, stopwords, doc_id)
       }
-     print(num_of_docs)
+
+
+      println(num_of_docs)
+      extract_ngrams("This is House of Cards. The new House of Cards. House of Cards.".split(" "), stopwords, 1)
+      //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), stopwords, 1)
+
+      for (unigram <- unigrams) {
+        println("<" + unigram._1 + "> ")
+        for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
+        println()
+      }
     }
   }
 
