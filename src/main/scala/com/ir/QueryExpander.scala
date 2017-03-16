@@ -86,10 +86,11 @@ object QueryExpander {
 
             val token = input(gramIndex+i)
 
-            bigram :+= token
+            bigram  :+= token
             trigram :+= token
 
             if (!stopwords.contains(token)) {
+
               if (bigramCounter < 2) {
 
                 bigramCounter += 1
@@ -129,11 +130,10 @@ object QueryExpander {
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
         //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        //extract_ngrams(words, doc_id)
+        extract_ngrams(words, doc_id)
       }
 
-      extract_ngrams("this is house of cards the new cards".split(" "), 1)
-      //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), 1)
+      //extract_ngrams("this is house of cards the new cards the new house of cards".split(" "), 1)
 
 
       unigrams
