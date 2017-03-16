@@ -9,9 +9,9 @@ object QueryExpander {
 
   val stopwords = List("of", "in", "to", "per", "the", "by", "a")
   val unigrams  = mutable.HashMap[String, Array[Array[Int]]]()
-  val bigrams   = mutable.HashMap[Array[String], Array[Array[Int]]]()
-  val trigrams  = mutable.HashMap[Array[String], Array[Array[Int]]]()
-
+  val bigrams   = mutable.HashMap[String, Array[Array[Int]]]()
+  val trigrams  = mutable.HashMap[String, Array[Array[Int]]]()
+  var text_as_unigrams = Array[String]()
   var num_of_docs = 0
 
   /**
@@ -46,121 +46,62 @@ object QueryExpander {
     * @param input words of document
     * @param stopwords List of stopwords
     * @param docID docID of the current document
-    */
+*/
+  def update_nGram_Map(ngram:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) :Unit= {
+    if (!ngramMap.contains(ngram)) {
+      ngramMap.put(ngram, Array(Array(docID, 1)))
+    }
+    else {
+      {
+        var doclist = ngramMap(ngram)
+        var index = 0
+        var new_docID = true
+        for (freqpair <- doclist) {
+          if (freqpair.head == docID) {
+            doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
+            ngramMap.update(ngram, doclist)
+            new_docID = false
+          }
+          index += 1
+        }
+        if (new_docID){
+          doclist :+= Array(docID, 1)
+          ngramMap.update(ngram, doclist)
+        }
+      }
+  }
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
-
-    var uni = 0
-    var bi  = 0
-    var tri = 0
-
-    var unigram = ""
-    var bigram  = Array[String]()
+    var bigramcounter = 0
+    var trigramcounter = 0
+    var gramIndex = 0
+    var bigram = Array[String]()
     var trigram = Array[String]()
 
-
-    for (word <- input) {
-      if (uni == 1) {
-
-        unigram = unigram.trim
-
-        //case1: unigram not in Map, yet
-        if (!unigrams.contains(unigram))
-          unigrams.put(unigram, Array(Array(docID, 1)))
-        //case2a & 2b: unigram is in Map, occurance either in existing docID or new docID
-        else {
-          var doclist = unigrams(unigram)
-          var index = 0
-          var new_docID = true
-          //case2a: unigram with existing docID, update frequency in found Array
-          for (freqpair <- unigrams(unigram)) {
-            if (freqpair.head == docID) {
-              doclist.update(index, Array(freqpair(0), freqpair(1)+1))
-              unigrams.update(unigram, doclist)
-              new_docID = false
-            }
-            index += 1
+    for (i <- input.indices) {
+      if (!stopwords.contains(input(i))) {
+        bigramcounter = 0
+        trigramcounter = 0
+        gramIndex = 0
+        bigram = Array()
+        trigram = Array()
+        while (trigramcounter != 3 && gramIndex<input.length) {
+          if (bigramcounter == 1) {
+            update_nGram_Map(bigram.mkString(" "), bigrams, docID)
           }
-          //case2b:
-          if (new_docID) {
-            doclist :+= Array(docID, 1)
-            unigrams.update(unigram, doclist)
+          gramIndex = i + gramIndex
+          val actualword = input(gramIndex)
+          bigram += actualword
+          trigram += actualword
+          if (!stopwords.contains(actualword)) {
+            bigramcounter += 1
+            trigramcounter += 1
           }
         }
-        //make variables empty
-        unigram = ""
-        uni = 0
-      }
-
-      if (bi == 2) {
-
-        //case1: bigram not in Map, yet
-        if (!bigrams.contains(bigram))
-          bigrams.put(bigram, Array(Array(docID, 1)))
-        //case2a & 2b: bigram is in Map, occurance either in existing docID or new docID
-        else {
-          var doclist = bigrams(bigram)
-          var index = 0
-          var new_docID = true
-          //case2a: bigram with existing docID, update frequency in found Array
-          for (freqpair <- bigrams(bigram)) {
-            if (freqpair.head == docID) {
-              doclist.update(index, Array(freqpair(0), freqpair(1)+1))
-              bigrams.update(bigram, doclist)
-              new_docID = false
-            }
-            index += 1
-          }
-          //case2b:
-          if (new_docID) {
-            doclist :+= Array(docID, 1)
-            bigrams.update(bigram, doclist)
-          }
-        }
-        //make variables empty
-        bigram = Array[String]()
-        bi = 0
-      }
-
-      if (tri == 3) {
-
-        //case1: trigram not in Map, yet
-        if (!trigrams.contains(trigram))
-          trigrams.put(trigram, Array(Array(docID, 1)))
-        //case2a & 2b: trigram is in Map, occurance either in existing docID or new docID
-        else {
-          var doclist = trigrams(trigram)
-          var index = 0
-          var new_docID = true
-          //case2a: trigram with existing docID, update frequency in found Array
-          for (freqpair <- trigrams(trigram)) {
-            if (freqpair.head == docID) {
-              doclist.update(index, Array(freqpair(0), freqpair(1)+1))
-              trigrams.update(bigram, doclist)
-              new_docID = false
-            }
-            index += 1
-          }
-          //case2b:
-          if (new_docID) {
-            doclist :+= Array(docID, 1)
-            trigrams.update(trigram, doclist)
-          }
-        }
-        //make variables empty
-        trigram = Array[String]()
-        tri = 0
-      }
-      //append next word
-      unigram += " " + word
-      bigram  :+= word
-      trigram :+= word
-      //update counter if word is content word
-      if (!stopwords.contains(word)) {
-        uni += 1
-        bi  += 1
-        tri += 1
+        update_nGram_Map(trigram.mkString(" "), trigrams, docID)
       }
     }
+    }
+
   }
 
   def main(args : Array[String]) {
@@ -175,20 +116,19 @@ object QueryExpander {
         val words = pe.preprocessing(file.toString)
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
-        println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
+        //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
         //extract_ngrams(words, stopwords, doc_id)
       }
 
 
       println(num_of_docs)
-      extract_ngrams("This is House of Cards. The new House of Cards. House of Cards.".split(" "), stopwords, 1)
+      extract_ngrams("this is house of cards the new house of cards house of cards".split(" "), stopwords, 1)
       //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), stopwords, 1)
-
-      for (unigram <- unigrams) {
-        println("<" + unigram._1 + "> ")
-        for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
-        println()
-      }
+/*
+      for (unigram <- bigrams) {
+        println("<" + unigram._1.mkString(" ") + "> ")
+       for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
+      }*/
     }
   }
 
