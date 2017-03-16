@@ -63,7 +63,7 @@ object QueryExpander {
   }
 
   def extract_ngrams(input: Array[String], docID:Int) = {
-    var gramCounter = 0
+
     var gramIndex = 0
     var bigram = Array[String]()
     var trigram = Array[String]()
@@ -71,12 +71,12 @@ object QueryExpander {
     for (i <- input.indices) {
 
       if (!stopwords.contains(input(i))) {
-        gramCounter = 0
+        var gramCounter = 0
 
         bigram = Array()
         trigram = Array()
         while (gramCounter != 3) {
-          //if (gramIndex+i<input.length-1) {
+          if (gramIndex+i<input.length-1) {
 
             if (gramCounter == 2) {
               update_nGram_Map(bigram.mkString(" "), bigrams, docID)
@@ -88,7 +88,8 @@ object QueryExpander {
               gramCounter += 1
             }
             gramIndex += 1
-          //}
+          }
+          else gramCounter = 3
         }
         gramIndex = 0
         update_nGram_Map(trigram.mkString(" "), trigrams, docID)
