@@ -39,36 +39,31 @@ object QueryExpander {
   }
 
 
-
-
-
-  def update_nGram_Map(ngram:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) :Unit= {
+  def update_nGram_Map(ngram:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) = {
     if (!ngramMap.contains(ngram)) {
       ngramMap.put(ngram, Array(Array(docID, 1)))
     }
     else {
-      {
-        var doclist = ngramMap(ngram)
-        var index = 0
-        var new_docID = true
-        for (freqpair <- doclist) {
-          if (freqpair.head == docID) {
-            doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
-            ngramMap.update(ngram, doclist)
-            new_docID = false
-          }
-          index += 1
-        }
-        if (new_docID) {
-          doclist :+= Array(docID, 1)
+      var doclist = ngramMap(ngram)
+      var index = 0
+      var new_docID = true
+      for (freqpair <- doclist) {
+        if (freqpair.head == docID) {
+          doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
           ngramMap.update(ngram, doclist)
+          new_docID = false
         }
+        index += 1
+      }
+      if (new_docID) {
+        doclist :+= Array(docID, 1)
+        ngramMap.update(ngram, doclist)
       }
     }
   }
-  def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
-    var bigramcounter = 0
-    var trigramcounter = 0
+
+  def extract_ngrams(input: Array[String], docID:Int) = {
+    var gramCounter = 0
     var gramIndex = 0
     var bigram = Array[String]()
     var trigram = Array[String]()
@@ -76,30 +71,30 @@ object QueryExpander {
     for (i <- input.indices) {
 
       if (!stopwords.contains(input(i))) {
-        bigramcounter = 0
-        trigramcounter = 0
+        gramCounter = 0
 
         bigram = Array()
         trigram = Array()
-        while (trigramcounter != 3 && gramIndex+i<input.length-1) {
+        while (gramCounter != 3) {
+          //if (gramIndex+i<input.length-1) {
 
-          if (bigramcounter == 2) {
-            update_nGram_Map(bigram.mkString(" "), bigrams, docID)
-          }
-          val actualword = input(gramIndex+i)
-          bigram :+= actualword
-          trigram :+= actualword
-          if (!stopwords.contains(actualword)) {
-            bigramcounter += 1
-            trigramcounter += 1
-          }
-          gramIndex += 1
+            if (gramCounter == 2) {
+              update_nGram_Map(bigram.mkString(" "), bigrams, docID)
+            }
+            val actualword = input(gramIndex+i)
+            bigram :+= actualword
+            trigram :+= actualword
+            if (!stopwords.contains(actualword)) {
+              gramCounter += 1
+            }
+            gramIndex += 1
+          //}
         }
         gramIndex = 0
         update_nGram_Map(trigram.mkString(" "), trigrams, docID)
       }
     }
-    }
+  }
 
 
 
@@ -116,18 +111,18 @@ object QueryExpander {
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
         //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        //extract_ngrams(words, stopwords, doc_id)
+        //extract_ngrams(words, doc_id)
       }
 
 
       println(num_of_docs)
-      extract_ngrams("this is house of cards the new house of cards house of cards".split(" "), stopwords, 1)
-      //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), stopwords, 1)
+      extract_ngrams("this is house of cards the new cards".split(" "), 1)
+      //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), 1)
 
-      for (unigram <- bigrams) {
-        println("<" + unigram._1 + "> ")
-       for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
-      }
+
+      unigrams
+      bigrams
+      trigrams
     }
   }
 
