@@ -78,22 +78,24 @@ object QueryExpander {
       if (!stopwords.contains(input(i))) {
         bigramcounter = 0
         trigramcounter = 0
-        gramIndex = 0
+
         bigram = Array()
         trigram = Array()
-        while (trigramcounter != 3 && gramIndex<input.length) {
-          if (bigramcounter == 1) {
+        while (trigramcounter != 3 && gramIndex+i<input.length-1) {
+
+          if (bigramcounter == 2) {
             update_nGram_Map(bigram.mkString(" "), bigrams, docID)
           }
-          val actualword = input(gramIndex)
+          val actualword = input(gramIndex+i)
           bigram :+= actualword
           trigram :+= actualword
           if (!stopwords.contains(actualword)) {
             bigramcounter += 1
             trigramcounter += 1
           }
-          gramIndex = i + gramIndex
+          gramIndex += 1
         }
+        gramIndex = 0
         update_nGram_Map(trigram.mkString(" "), trigrams, docID)
       }
     }
