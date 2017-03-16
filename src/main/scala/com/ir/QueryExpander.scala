@@ -7,7 +7,7 @@ import scala.collection.mutable
   */
 object QueryExpander {
 
-  val stopwords = List("of", "in", "to", "per", "the", "by", "a")
+  val stopwords = List("is", "this", "the", "of", "in", "to", "per", "the", "by", "a")
   val unigrams  = mutable.HashMap[String, Array[Array[Int]]]()
   val bigrams   = mutable.HashMap[String, Array[Array[Int]]]()
   val trigrams  = mutable.HashMap[String, Array[Array[Int]]]()
@@ -41,12 +41,7 @@ object QueryExpander {
 
 
 
-  /**
-    *
-    * @param input words of document
-    * @param stopwords List of stopwords
-    * @param docID docID of the current document
-*/
+
   def update_nGram_Map(ngram:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) :Unit= {
     if (!ngramMap.contains(ngram)) {
       ngramMap.put(ngram, Array(Array(docID, 1)))
@@ -64,11 +59,12 @@ object QueryExpander {
           }
           index += 1
         }
-        if (new_docID){
+        if (new_docID) {
           doclist :+= Array(docID, 1)
           ngramMap.update(ngram, doclist)
         }
       }
+    }
   }
   def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
     var bigramcounter = 0
@@ -78,6 +74,7 @@ object QueryExpander {
     var trigram = Array[String]()
 
     for (i <- input.indices) {
+
       if (!stopwords.contains(input(i))) {
         bigramcounter = 0
         trigramcounter = 0
@@ -88,21 +85,21 @@ object QueryExpander {
           if (bigramcounter == 1) {
             update_nGram_Map(bigram.mkString(" "), bigrams, docID)
           }
-          gramIndex = i + gramIndex
           val actualword = input(gramIndex)
-          bigram += actualword
-          trigram += actualword
+          bigram :+= actualword
+          trigram :+= actualword
           if (!stopwords.contains(actualword)) {
             bigramcounter += 1
             trigramcounter += 1
           }
+          gramIndex = i + gramIndex
         }
         update_nGram_Map(trigram.mkString(" "), trigrams, docID)
       }
     }
     }
 
-  }
+
 
   def main(args : Array[String]) {
     val pe = new PhraseExtractor
@@ -124,11 +121,11 @@ object QueryExpander {
       println(num_of_docs)
       extract_ngrams("this is house of cards the new house of cards house of cards".split(" "), stopwords, 1)
       //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), stopwords, 1)
-/*
+
       for (unigram <- bigrams) {
-        println("<" + unigram._1.mkString(" ") + "> ")
+        println("<" + unigram._1 + "> ")
        for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
-      }*/
+      }
     }
   }
 
