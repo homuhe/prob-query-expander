@@ -69,30 +69,48 @@ object QueryExpander {
     var trigram = Array[String]()
 
     for (i <- input.indices) {
-
       if (!stopwords.contains(input(i))) {
-        var gramCounter = 0
+
+        //skipping from non-stopword to non-stopwords equals all unigrams
+        update_nGram_Map(input(i), unigrams, docID)
 
         bigram = Array()
         trigram = Array()
-        while (gramCounter != 3) {
-          if (gramIndex+i<input.length) {
 
-            if (gramCounter == 2) {
-              update_nGram_Map(bigram.mkString(" "), bigrams, docID)
-            }
-            val actualword = input(gramIndex+i)
-            bigram :+= actualword
-            trigram :+= actualword
-            if (!stopwords.contains(actualword)) {
-              gramCounter += 1
+        //counts skip-grams by ignoring stopwords
+        var bigramCounter = 0
+        var trigramCounter = 0
+
+        while (trigramCounter != 3) {
+          if (gramIndex + i < input.length) {
+
+            val token = input(gramIndex+i)
+
+            bigram  :+= token
+            trigram :+= token
+
+            if (!stopwords.contains(token)) {
+
+              if (bigramCounter < 2) {
+
+                bigramCounter += 1
+              }
+              if (bigramCounter == 2) {
+                update_nGram_Map(bigram.mkString(" "), bigrams, docID)
+                bigramCounter = 3
+              }
+
+              if (trigramCounter < 3) {
+
+                trigramCounter += 1
+              }
+              if (trigramCounter == 3) update_nGram_Map(trigram.mkString(" "), trigrams, docID)
             }
             gramIndex += 1
           }
-          else gramCounter = 3
+          else trigramCounter = 3
         }
         gramIndex = 0
-        update_nGram_Map(trigram.mkString(" "), trigrams, docID)
       }
     }
   }
@@ -112,18 +130,16 @@ object QueryExpander {
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
         //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        //extract_ngrams(words, doc_id)
+        extract_ngrams(words, doc_id)
       }
 
-
-      println(num_of_docs)
-      extract_ngrams("this is house of cards the new cards".split(" "), 1)
-      //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), 1)
+      //extract_ngrams("this is house of cards the new cards the new house of cards".split(" "), 1)
 
 
       unigrams
       bigrams
       trigrams
+      val x = 2
     }
   }
 
