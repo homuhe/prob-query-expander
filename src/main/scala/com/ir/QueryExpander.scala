@@ -136,7 +136,6 @@ object QueryExpander {
     */
   def extract_ngrams(tokens: Array[String], docID:Int) = {
 
-    var lookahead_i = 0
     var bigram = Array[String]()
     var trigram = Array[String]()
 
@@ -149,10 +148,12 @@ object QueryExpander {
         bigram = Array()
         trigram = Array()
 
-        //skip-gram counters
+        //skip-gram counter
         var ngramCounter = 0
         var bigram_complete = false
         var trigram_complete = false
+
+        var lookahead_i = 0
 
         while (!trigram_complete) {
           if (i + lookahead_i < tokens.length) { //Index + Lookahead: max. array length
@@ -162,7 +163,6 @@ object QueryExpander {
             trigram :+= token
 
             if (!stopwords.contains(token)) {
-
                 ngramCounter += 1
 
               if (ngramCounter == 2 && !bigram_complete) {
@@ -178,7 +178,6 @@ object QueryExpander {
           }
           else trigram_complete = true
         }
-        lookahead_i = 0
       }
     }
   }
