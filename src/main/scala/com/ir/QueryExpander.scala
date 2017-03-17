@@ -155,28 +155,25 @@ object QueryExpander {
 
         var lookahead_i = 0
 
-        while (!trigram_complete) {
-          if (i + lookahead_i < tokens.length) { //Index + Lookahead: max. array length
+        while (i + lookahead_i < tokens.length) { //Index + Lookahead: max. array length
 
-            val token = tokens(i + lookahead_i)
-            bigram  :+= token
-            trigram :+= token
+          val token = tokens(i + lookahead_i)
+          bigram  :+= token
+          trigram :+= token
 
-            if (!stopwords.contains(token)) {
-                ngramCounter += 1
+          if (!stopwords.contains(token)) {
+              ngramCounter += 1
 
-              if (ngramCounter == 2 && !bigram_complete) {
-                update_nGram_Map(bigram.mkString(" "), bigrams, docID)
-                bigram_complete = true
-              }
-              else if (ngramCounter == 3 && !trigram_complete) {
-                update_nGram_Map(trigram.mkString(" "), trigrams, docID)
-                trigram_complete = true
-              }
+            if (ngramCounter == 2 && !bigram_complete) {
+              update_nGram_Map(bigram.mkString(" "), bigrams, docID)
+              bigram_complete = true
             }
-            lookahead_i += 1
+            else if (ngramCounter == 3 && !trigram_complete) {
+              update_nGram_Map(trigram.mkString(" "), trigrams, docID)
+              trigram_complete = true
+            }
           }
-          else trigram_complete = true
+          lookahead_i += 1
         }
       }
     }
