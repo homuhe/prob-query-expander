@@ -150,10 +150,11 @@ object QueryExpander {
         trigram = Array()
 
         //skip-gram counters
-        var bigramCounter = 0
-        var trigramCounter = 0
+        var ngramCounter = 0
+        var bigram_complete = false
+        var trigram_complete = false
 
-        while (trigramCounter != 3) {
+        while (!trigram_complete) {
           if (i + lookahead_i < tokens.length) { //Index + Lookahead: max. array length
 
             val token = tokens(i + lookahead_i)
@@ -162,25 +163,20 @@ object QueryExpander {
 
             if (!stopwords.contains(token)) {
 
-              if (bigramCounter < 2) {
-                bigramCounter += 1
-              }
+                ngramCounter += 1
 
-              if (bigramCounter == 2) {
+              if (ngramCounter == 2 && !bigram_complete) {
                 update_nGram_Map(bigram.mkString(" "), bigrams, docID)
-                bigramCounter = 3
+                bigram_complete = true
               }
-
-              if (trigramCounter < 3) {
-                trigramCounter += 1
-              }
-
-              if (trigramCounter == 3)
+              else if (ngramCounter == 3 && !trigram_complete) {
                 update_nGram_Map(trigram.mkString(" "), trigrams, docID)
+                trigram_complete = true
+              }
             }
             lookahead_i += 1
           }
-          else trigramCounter = 3
+          else trigram_complete = true
         }
         lookahead_i = 0
       }
