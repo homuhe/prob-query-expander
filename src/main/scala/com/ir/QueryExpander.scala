@@ -8,9 +8,9 @@ import scala.collection.mutable
 object QueryExpander {
 
   val stopwords = List("is", "this", "the", "of", "in", "to", "per", "the", "by", "a")
-  val unigrams  = mutable.HashMap[String, Array[Array[Int]]]()
-  val bigrams   = mutable.HashMap[String, Array[Array[Int]]]()
-  val trigrams  = mutable.HashMap[String, Array[Array[Int]]]()
+  val unigrams = mutable.HashMap[String, Array[Array[Int]]]()
+  val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
+  val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
   var text_as_unigrams = Array[String]()
   var num_of_docs = 0
 
@@ -18,24 +18,76 @@ object QueryExpander {
     * calculates the inverse document frequency for a given term,
     * can be extracted by using the number of total documents and the number of documents
     * containing the term
+    *
     * @param term a String
     * @return the IDF as a Float
     */
-  def getIDF(term:String) : Float = {
+  def getIDF(term: String): Float = {
     val df = unigrams.getOrElse(term, Array()).length
-    val idf = Math.log(num_of_docs/df).toFloat
+    val idf = Math.log(num_of_docs / df).toFloat
     idf
+  }
+
+  /**
+    * take a term and sum all the frequencies from all documents that contain that term
+    * @param term
+    * @return the total frequency of a term in a corpus
+    */
+  def get_frequency(term: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Int = {
+    val docList = ngramMap(term)
+    docList.map(el =>el(1)).sum
+  }
+
+  /**
+    * take a list of candidate completion words and return the sum of the product of the frequency and the IDF of a term:
+    * Sum: (#candidate*IDF(candidate)
+    * this can be used as the normalization factor in the probability calculation for the most probable term
+    * @param candidates
+    * @return a Float = normalization factor
+    */
+  def get_sum_of_IDFs(candidates: Array[String], ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
+    val IDFs = candidates.map(candidate => getIDF(candidate)*get_frequency(candidate, ngramMap)).sum
+    IDFs
+  }
+
+  /**
+    * This calculation gives the probability that a term is the completion:
+    * p(completion|partial word)
+    * @param term a candidate completion word
+    * @param normalizationfactor
+    * @return the probability of that term
+    */
+  def completion_probability(term:String, normalizationfactor: Float, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
+    get_frequency(term, ngramMap)*getIDF(term)/normalizationfactor
   }
 
   /**
     * for a given query word this method extracts all words that are possible word completions of that
     * query word
+    *
     * @param start a String = query word
     * @return an Array of Strings that contains the candidate word completions
     */
-  def extract_candidates(start: String): Array[String] = {
-    val candidates = unigrams.keySet.filter(el => el.startsWith(start))
+  def extract_candidates(start: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Array[String] = {
+    val candidates = ngramMap.keySet.filter(el => el.startsWith(start))
     candidates.toArray
+  }
+
+  def get_avg_nGram_freq( ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
+    val avg_freq = ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
+    avg_freq
+  }
+
+  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]:Double = {
+    get_frequency(ngram,ngramMap)/Math.log(get_avg_nGram_freq(ngramMap))}
+
+  def extract_phrase_candidates(term:String):(Array[String], Array[String]) = {
+    val bigramcandidates = bigrams.keySet.filter(_.contains(term))
+    val trigramcandidates = trigrams.keySet.filter(_.contains(term))
+    (bigramcandidates.toArray, trigramcandidates.toArray)
+  }
+  def term_phrase_probability(term: String, phrase:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
+    nGram_norm(phrase, ngramMap)/
   }
 
 
@@ -67,7 +119,8 @@ object QueryExpander {
     var gramIndex = 0
     var bigram = Array[String]()
     var trigram = Array[String]()
-
+    var bigram_completed = false
+    import scala.util.control.Breaks._
     for (i <- input.indices) {
       if (!stopwords.contains(input(i))) {
 
@@ -116,8 +169,7 @@ object QueryExpander {
   }
 
 
-
-  def main(args : Array[String]) {
+  def main(args: Array[String]) {
     val pe = new PhraseExtractor
 
     if (args.length != 1) println("Not enough arguments!")
@@ -133,13 +185,6 @@ object QueryExpander {
         extract_ngrams(words, doc_id)
       }
 
-      //extract_ngrams("this is house of cards the new cards the new house of cards".split(" "), 1)
-
-
-      unigrams
-      bigrams
-      trigrams
-      val x = 2
     }
   }
 
