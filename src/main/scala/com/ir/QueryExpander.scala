@@ -11,7 +11,6 @@ object QueryExpander {
   val unigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
-  var text_as_unigrams = Array[String]()
   var num_of_docs = 0
 
   /**
@@ -24,8 +23,7 @@ object QueryExpander {
     */
   def getIDF(term: String): Float = {
     val df = unigrams.getOrElse(term, Array()).length
-    val idf = Math.log(num_of_docs / df).toFloat
-    idf
+    Math.log(num_of_docs / df).toFloat
   }
 
   /**
@@ -46,8 +44,8 @@ object QueryExpander {
     * @return a Float = normalization factor
     */
   def get_sum_of_IDFs(candidates: Array[String], ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
-    val IDFs = candidates.map(candidate => getIDF(candidate)*get_frequency(candidate, ngramMap)).sum
-    IDFs
+
+    candidates.map(candidate => getIDF(candidate) * get_frequency(candidate, ngramMap)).sum
   }
 
   /**
@@ -57,8 +55,11 @@ object QueryExpander {
     * @param normalizationfactor
     * @return the probability of that term
     */
-  def completion_probability(term:String, normalizationfactor: Float, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
-    get_frequency(term, ngramMap)*getIDF(term)/normalizationfactor
+  def completion_probability(term:String,
+                             normalizationfactor: Float,
+                             ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
+
+    get_frequency(term, ngramMap) * getIDF(term) / normalizationfactor
   }
 
   /**
@@ -68,102 +69,120 @@ object QueryExpander {
     * @param start a String = query word
     * @return an Array of Strings that contains the candidate word completions
     */
-  def extract_candidates(start: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Array[String] = {
-    val candidates = ngramMap.keySet.filter(el => el.startsWith(start))
-    candidates.toArray
+  def extract_candidates(start: String,
+                         ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Array[String] = {
+
+    ngramMap.keySet.filter(_.startsWith(start)).toArray //TODO .toArray maybe not needed
   }
 
   def get_avg_nGram_freq( ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
-    val avg_freq = ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
-    avg_freq
+    ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
   }
 
-  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]:Double = {
-    get_frequency(ngram,ngramMap)/Math.log(get_avg_nGram_freq(ngramMap))}
+  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Double = {
+    get_frequency(ngram,ngramMap) / Math.log(get_avg_nGram_freq(ngramMap))
+  }
 
   def extract_phrase_candidates(term:String):(Array[String], Array[String]) = {
     val bigramcandidates = bigrams.keySet.filter(_.contains(term))
     val trigramcandidates = trigrams.keySet.filter(_.contains(term))
+
     (bigramcandidates.toArray, trigramcandidates.toArray)
   }
-  def term_phrase_probability(term: String, phrase:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
-    nGram_norm(phrase, ngramMap)/
+
+  def term_phrase_probability(term: String, phrase:String,
+                              ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
+
+    nGram_norm(phrase, ngramMap)//TODO /
   }
 
+  /**
+    * //TODO
+    * @param ngram
+    * @param ngramMap
+    * @param docID
+    * @return
+    */
+  def update_nGram_Map(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) = {
 
-  def update_nGram_Map(ngram:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) = {
-    if (!ngramMap.contains(ngram)) {
+    if (!ngramMap.contains(ngram)) {              //ngram new to Map -> new entry with new docID & freq 1
       ngramMap.put(ngram, Array(Array(docID, 1)))
     }
-    else {
+    else {                                        //ngram already in Map, either with same or new docID
       var doclist = ngramMap(ngram)
       var index = 0
       var new_docID = true
       for (freqpair <- doclist) {
-        if (freqpair.head == docID) {
+        if (freqpair.head == docID) {             //ngram with docID exists in Map -> update freq
           doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
           ngramMap.update(ngram, doclist)
           new_docID = false
         }
         index += 1
       }
-      if (new_docID) {
-        doclist :+= Array(docID, 1)
+
+      if (new_docID) {                            //ngram exists in Map, but given docID is new
+        doclist :+= Array(docID, 1)                 //append new docID - freq entry
         ngramMap.update(ngram, doclist)
       }
     }
   }
 
-  def extract_ngrams(input: Array[String], docID:Int) = {
+  /**
+    * Extracts uni/bi/trigrams (skipgrams) by iterating once over all non-stopwords + lookahead.
+    *
+    * @param tokens input of given document
+    * @param docID current document ID
+    */
+  def extract_ngrams(tokens: Array[String], docID:Int) = {
 
-    var gramIndex = 0
+    var lookahead_i = 0
     var bigram = Array[String]()
     var trigram = Array[String]()
-    var bigram_completed = false
-    import scala.util.control.Breaks._
-    for (i <- input.indices) {
-      if (!stopwords.contains(input(i))) {
 
-        //skipping from non-stopword to non-stopwords equals all unigrams
-        update_nGram_Map(input(i), unigrams, docID)
+    for (i <- tokens.indices) {
+      if (!stopwords.contains(tokens(i))) {
+
+        //unigrams: only non-stopword tokens
+        update_nGram_Map(tokens(i), unigrams, docID)
 
         bigram = Array()
         trigram = Array()
 
-        //counts skip-grams by ignoring stopwords
+        //skip-gram counters
         var bigramCounter = 0
         var trigramCounter = 0
 
         while (trigramCounter != 3) {
-          if (gramIndex + i < input.length) {
+          if (i + lookahead_i < tokens.length) { //Index + Lookahead: max. array length
 
-            val token = input(gramIndex+i)
-
+            val token = tokens(i + lookahead_i)
             bigram  :+= token
             trigram :+= token
 
             if (!stopwords.contains(token)) {
 
               if (bigramCounter < 2) {
-
                 bigramCounter += 1
               }
+
               if (bigramCounter == 2) {
                 update_nGram_Map(bigram.mkString(" "), bigrams, docID)
                 bigramCounter = 3
               }
 
               if (trigramCounter < 3) {
-
                 trigramCounter += 1
               }
-              if (trigramCounter == 3) update_nGram_Map(trigram.mkString(" "), trigrams, docID)
+
+              if (trigramCounter == 3)
+                update_nGram_Map(trigram.mkString(" "), trigrams, docID)
             }
-            gramIndex += 1
+            lookahead_i += 1
           }
           else trigramCounter = 3
         }
-        gramIndex = 0
+        lookahead_i = 0
       }
     }
   }
@@ -182,7 +201,12 @@ object QueryExpander {
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
         //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        extract_ngrams(words, doc_id)
+        extract_ngrams("the house of cards is a series about a house of cards in government".split(" "), doc_id)
+
+        unigrams
+        bigrams
+        trigrams
+        val x = "bla"
       }
 
     }
