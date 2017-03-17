@@ -8,9 +8,9 @@ import scala.collection.mutable
 object QueryExpander {
 
   val stopwords = List("is", "this", "the", "of", "in", "to", "per", "the", "by", "a")
-  val unigrams  = mutable.HashMap[String, Array[Array[Int]]]()
-  val bigrams   = mutable.HashMap[String, Array[Array[Int]]]()
-  val trigrams  = mutable.HashMap[String, Array[Array[Int]]]()
+  val unigrams = mutable.HashMap[String, Array[Array[Int]]]()
+  val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
+  val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
   var text_as_unigrams = Array[String]()
   var num_of_docs = 0
 
@@ -18,18 +18,20 @@ object QueryExpander {
     * calculates the inverse document frequency for a given term,
     * can be extracted by using the number of total documents and the number of documents
     * containing the term
+    *
     * @param term a String
     * @return the IDF as a Float
     */
-  def getIDF(term:String) : Float = {
+  def getIDF(term: String): Float = {
     val df = unigrams.getOrElse(term, Array()).length
-    val idf = Math.log(num_of_docs/df).toFloat
+    val idf = Math.log(num_of_docs / df).toFloat
     idf
   }
 
   /**
     * for a given query word this method extracts all words that are possible word completions of that
     * query word
+    *
     * @param start a String = query word
     * @return an Array of Strings that contains the candidate word completions
     */
@@ -39,10 +41,7 @@ object QueryExpander {
   }
 
 
-
-
-
-  def update_nGram_Map(ngram:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) :Unit= {
+  def update_nGram_Map(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID: Int): Unit = {
     if (!ngramMap.contains(ngram)) {
       ngramMap.put(ngram, Array(Array(docID, 1)))
     }
@@ -66,42 +65,54 @@ object QueryExpander {
       }
     }
   }
-  def extract_ngrams(input: Array[String], stopwords:List[String], docID:Int) = {
+
+  def extract_ngrams(input: Array[String], stopwords: List[String], docID: Int) = {
     var bigramcounter = 0
     var trigramcounter = 0
     var gramIndex = 0
     var bigram = Array[String]()
     var trigram = Array[String]()
-
+    var bigram_completed = false
+    import scala.util.control.Breaks._
     for (i <- input.indices) {
-
+      println(i)
       if (!stopwords.contains(input(i))) {
-        bigramcounter = 0
-        trigramcounter = 0
-        gramIndex = 0
-        bigram = Array()
-        trigram = Array()
-        while (trigramcounter != 3 && gramIndex<input.length) {
-          if (bigramcounter == 1) {
-            update_nGram_Map(bigram.mkString(" "), bigrams, docID)
+        breakable {
+          while (trigramcounter != 3) {
+            if (i + gramIndex == input.length){update_nGram_Map(bigram.mkString(" "), bigrams, docID)
+              break()}
+            if (bigramcounter == 2) {
+              println("ohoh")
+              update_nGram_Map(bigram.mkString(" "), bigrams, docID)
+              bigramcounter = 0
+              bigram_completed = true
+            }
+            val actualword = input(i + gramIndex)
+            println("actual word " + actualword)
+            bigram :+= actualword
+            println("bigram "+ bigram.mkString(" "))
+            println("counter " + bigramcounter)
+            trigram :+= actualword
+            if (!stopwords.contains(actualword)) {
+              if (!bigram_completed){bigramcounter += 1}
+              trigramcounter += 1
+            }
+            gramIndex += 1
           }
-          val actualword = input(gramIndex)
-          bigram :+= actualword
-          trigram :+= actualword
-          if (!stopwords.contains(actualword)) {
-            bigramcounter += 1
-            trigramcounter += 1
-          }
-          gramIndex = i + gramIndex
         }
-        update_nGram_Map(trigram.mkString(" "), trigrams, docID)
+          trigramcounter = 0
+          bigramcounter = 0
+          bigram = Array()
+          bigram_completed = false
+          gramIndex = 0
+          update_nGram_Map(trigram.mkString(" "), trigrams, docID)
+          trigram = Array()
       }
     }
-    }
+  }
 
 
-
-  def main(args : Array[String]) {
+  def main(args: Array[String]) {
     val pe = new PhraseExtractor
 
     if (args.length != 1) println("Not enough arguments!")
@@ -119,12 +130,12 @@ object QueryExpander {
 
 
       println(num_of_docs)
-      extract_ngrams("this is house of cards the new house of cards house of cards".split(" "), stopwords, 1)
+      extract_ngrams("this is house of cards the new house".split(" "), stopwords, 1)
       //extract_ngrams("This is House of the Cards. The new House of Cards. House of the Cards.".split(" "), stopwords, 1)
 
       for (unigram <- bigrams) {
         println("<" + unigram._1 + "> ")
-       for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
+        for (freqpair <- unigram._2) println(" in doc " + freqpair(0) + " with frequency " + freqpair(1))
       }
     }
   }
