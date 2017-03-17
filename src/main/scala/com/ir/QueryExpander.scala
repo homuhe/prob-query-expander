@@ -33,8 +33,8 @@ object QueryExpander {
     * @param term
     * @return the total frequency of a term in a corpus
     */
-  def get_frequency(term: String): Int = {
-    val docList = unigrams(term)
+  def get_frequency(term: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Int = {
+    val docList = ngramMap(term)
     docList.map(el =>el(1)).sum
   }
 
@@ -45,8 +45,8 @@ object QueryExpander {
     * @param candidates
     * @return a Float = normalization factor
     */
-  def get_sum_of_IDFs(candidates: Array[String]):Float = {
-    val IDFs = candidates.map(candidate => getIDF(candidate)*get_frequency(candidate)).sum
+  def get_sum_of_IDFs(candidates: Array[String], ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
+    val IDFs = candidates.map(candidate => getIDF(candidate)*get_frequency(candidate, ngramMap)).sum
     IDFs
   }
 
@@ -57,22 +57,10 @@ object QueryExpander {
     * @param normalizationfactor
     * @return the probability of that term
     */
-  def completion_probability(term:String, normalizationfactor: Float): Float = {
-    get_frequency(term)*getIDF(term)/normalizationfactor
+  def completion_probability(term:String, normalizationfactor: Float, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
+    get_frequency(term, ngramMap)*getIDF(term)/normalizationfactor
   }
 
-  /**
-    * Given the beginning of a word, return the most probable completed word
-    * @param start
-    * @return
-    */
-  def get_most_probable(start: String): String = {
-    val candidates = extract_candidates(start)
-    val normalizationfactor = get_sum_of_IDFs(candidates)
-    val probabilities = candidates.map(completion_probability(_, normalizationfactor))
-    val best_candidate = candidates(probabilities.indexOf(probabilities.max))
-    best_candidate
-  }
   /**
     * for a given query word this method extracts all words that are possible word completions of that
     * query word
@@ -80,9 +68,26 @@ object QueryExpander {
     * @param start a String = query word
     * @return an Array of Strings that contains the candidate word completions
     */
-  def extract_candidates(start: String): Array[String] = {
-    val candidates = unigrams.keySet.filter(el => el.startsWith(start))
+  def extract_candidates(start: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Array[String] = {
+    val candidates = ngramMap.keySet.filter(el => el.startsWith(start))
     candidates.toArray
+  }
+
+  def get_avg_nGram_freq( ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
+    val avg_freq = ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
+    avg_freq
+  }
+
+  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]:Double = {
+    get_frequency(ngram,ngramMap)/Math.log(get_avg_nGram_freq(ngramMap))}
+
+  def extract_phrase_candidates(term:String):(Array[String], Array[String]) = {
+    val bigramcandidates = bigrams.keySet.filter(_.contains(term))
+    val trigramcandidates = trigrams.keySet.filter(_.contains(term))
+    (bigramcandidates.toArray, trigramcandidates.toArray)
+  }
+  def term_phrase_probability(term: String, phrase:String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
+    nGram_norm(phrase, ngramMap)/
   }
 
 
