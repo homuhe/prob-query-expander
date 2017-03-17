@@ -29,6 +29,51 @@ object QueryExpander {
   }
 
   /**
+    * take a term and sum all the frequencies from all documents that contain that term
+    * @param term
+    * @return the total frequency of a term in a corpus
+    */
+  def get_frequency(term: String): Int = {
+    val docList = unigrams(term)
+    docList.map(el =>el(1)).sum
+  }
+
+  /**
+    * take a list of candidate completion words and return the sum of the product of the frequency and the IDF of a term:
+    * Sum: (#candidate*IDF(candidate)
+    * this can be used as the normalization factor in the probability calculation for the most probable term
+    * @param candidates
+    * @return a Float = normalization factor
+    */
+  def get_sum_of_IDFs(candidates: Array[String]):Float = {
+    val IDFs = candidates.map(candidate => getIDF(candidate)*get_frequency(candidate)).sum
+    IDFs
+  }
+
+  /**
+    * This calculation gives the probability that a term is the completion:
+    * p(completion|partial word)
+    * @param term a candidate completion word
+    * @param normalizationfactor
+    * @return the probability of that term
+    */
+  def completion_probability(term:String, normalizationfactor: Float): Float = {
+    get_frequency(term)*getIDF(term)/normalizationfactor
+  }
+
+  /**
+    * Given the beginning of a word, return the most probable completed word
+    * @param start
+    * @return
+    */
+  def get_most_probable(start: String): String = {
+    val candidates = extract_candidates(start)
+    val normalizationfactor = get_sum_of_IDFs(candidates)
+    val probabilities = candidates.map(completion_probability(_, normalizationfactor))
+    val best_candidate = candidates(probabilities.indexOf(probabilities.max))
+    best_candidate
+  }
+  /**
     * for a given query word this method extracts all words that are possible word completions of that
     * query word
     *
@@ -135,13 +180,6 @@ object QueryExpander {
         extract_ngrams(words, doc_id)
       }
 
-      //extract_ngrams("this is house of cards the new cards the new house of cards".split(" "), 1)
-
-
-      unigrams
-      bigrams
-      trigrams
-      val x = 2
     }
   }
 
