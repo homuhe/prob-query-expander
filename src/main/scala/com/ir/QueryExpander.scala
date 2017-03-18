@@ -1,6 +1,10 @@
 package com.ir
 
+import java.util.regex.Pattern
+
 import scala.collection.mutable
+import scala.io.Source
+import java.io.File
 
 /**
   * Created by neele, holger on 09.03.17.
@@ -13,7 +17,38 @@ object QueryExpander {
   val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val docs2IDs = mutable.HashMap[String, Int]()
   var num_of_words = 0
+  var doc_id = 0
   var format = ""
+
+
+  /**
+    * extracts a word array of a conllu format file that contains only words (no punctuation) and is lowercased
+    * @param file : a String that denotes the input file
+    * @return the array of words contained in that file
+    */
+  def preprocessing(file: String, format: String): Array[String] = {
+    val delimiter = "[ \t\n\r,.?!\\-:;()\\[\\]'\"/*#&$]+"
+
+    var words = Iterator[String]()
+
+    if (format == "conll") {
+      words = Source.fromFile(file).getLines()
+        .filter(!_.isEmpty)
+        .map(_.split("\t")(1))
+        .map(_.toLowerCase())
+    }
+    else {
+      words = Source.fromFile(file.toString).getLines()
+        .filter(!_.isEmpty)
+        .map(_.toLowerCase()).mkString
+        .split(" ").toIterator
+    }
+
+    val spacePattern = Pattern.compile(delimiter)
+
+    words.filter(!spacePattern.matcher(_).find()).toArray
+  }
+
 
   /**
     * calculates the inverse document frequency for a given term,
@@ -99,6 +134,11 @@ object QueryExpander {
     nGram_norm(phrase, ngramMap)//TODO /
   }
 
+  def update_docs2IDs(doc: String) = {
+    docs2IDs.put(doc, doc_id)
+    doc_id += 1
+  }
+
   /**
     * //TODO
     * @param ngram
@@ -106,7 +146,7 @@ object QueryExpander {
     * @param docID
     * @return
     */
-  def update_nGram_Map(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) = {
+  def update_ngramMap(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) = {
 
     if (!ngramMap.contains(ngram)) {              //ngram new to Map -> new entry with new docID & freq 1
       ngramMap.put(ngram, Array(Array(docID, 1)))
@@ -137,7 +177,7 @@ object QueryExpander {
     * @param tokens input of given document
     * @param docID current document ID
     */
-  def extract_ngrams(tokens: Array[String], docID:Int) = {
+  def extract_ngrams(tokens: Array[String], docID:Int): Unit = {
 
     for (i <- tokens.indices) {
 
@@ -146,7 +186,7 @@ object QueryExpander {
       if (!stopwords.contains(tokens(i))) {
 
         //unigrams: only non-stopword tokens
-        update_nGram_Map(tokens(i), unigrams, docID)
+        update_ngramMap(tokens(i), unigrams, docID)
 
         var bigram = Array[String]()
         var trigram = Array[String]()
@@ -168,12 +208,12 @@ object QueryExpander {
               ngramCounter += 1
 
             if (ngramCounter == 2 && !bigram_complete) {
-              update_nGram_Map(bigram.mkString(" "), bigrams, docID)
+              update_ngramMap(bigram.mkString(" "), bigrams, docID)
               bigram_complete = true
             }
 
             else if (ngramCounter == 3 && !trigram_complete) {
-              update_nGram_Map(trigram.mkString(" "), trigrams, docID)
+              update_ngramMap(trigram.mkString(" "), trigrams, docID)
               trigram_complete = true
               lookahead_i = tokens.length //soft break of while condition
             }
@@ -184,30 +224,41 @@ object QueryExpander {
     }
   }
 
+  /**
+    * //TODO
+    * @return
+    */
   def get_num_docs() = docs2IDs.size
 
+  /**
+    * //TODO
+    * @param files
+    */
+  def create_ngrams(files: Array[File]): Unit = {
+
+    for (file <- files) {
+      val words = preprocessing(file.toString, format)
+      val doc = file.toString.split("/").last//.replace(".conll", "").toInt
+
+      //println("Reading doc " + doc + ", new docID: " + doc_id)//(files.indexOf(file)+1))
+
+      extract_ngrams(words, doc_id)
+      update_docs2IDs(doc)
+    }
+
+  }
+
+
+
   def main(args: Array[String]) {
-    val pe = new PhraseExtractor
 
     if (args.length < 1) println("Not enough arguments!")
     else {
-      if (args.length == 2) format = "conll"
+      if (args.length == 2) format = args(1)
 
-      val files = new java.io.File(args(0)).listFiles
+      val files = new File(args(0)).listFiles
 
-      var doc_id = 0
-
-      for (file <- files) {
-        val words = pe.preprocessing(file.toString, format)
-        val doc = file.toString.split("/").last//.replace(".conll", "").toInt
-
-        docs2IDs.put(doc, doc_id)
-
-        //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        extract_ngrams(words, doc_id)
-        
-        doc_id += 1
-      }
+      create_ngrams(files)
 
       var input = ""
       var prev_input = " "
@@ -235,15 +286,12 @@ object QueryExpander {
         input = candidates.sortBy(_._2)   //sort by score
                           .reverse        //descending order
                           .head._1
+
+        unigrams
+        bigrams
+        trigrams
+        docs2IDs
       }
-
-      unigrams
-      bigrams
-      trigrams
-      num_of_words
-      docs2IDs
-      val x = "bla"
-
     }
   }
 
