@@ -12,6 +12,7 @@ object QueryExpander {
   val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
   var num_of_docs = 0
+  var num_of_words = 0
 
   /**
     * calculates the inverse document frequency for a given term,
@@ -32,8 +33,7 @@ object QueryExpander {
     * @return the total frequency of a term in a corpus
     */
   def get_frequency(term: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Int = {
-    val docList = ngramMap(term)
-    docList.map(el =>el(1)).sum
+    ngramMap(term).map(_(1)).sum
   }
 
   /**
@@ -70,17 +70,17 @@ object QueryExpander {
     * @return an Array of Strings that contains the candidate word completions
     */
   def extract_candidates(start: String,
-                         ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Array[String] = {
+                         ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
 
-    ngramMap.keySet.filter(_.startsWith(start)).toArray //TODO .toArray maybe not needed
+    ngramMap.keySet.filter(_.startsWith(start)).toArray
   }
 
-  def get_avg_nGram_freq( ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
+  def get_avg_nGram_freq( ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
     ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
   }
 
   def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Double = {
-    get_frequency(ngram,ngramMap) / Math.log(get_avg_nGram_freq(ngramMap))
+    get_frequency(ngram, ngramMap) / Math.log(get_avg_nGram_freq(ngramMap))
   }
 
   def extract_phrase_candidates(term:String):(Array[String], Array[String]) = {
@@ -136,17 +136,17 @@ object QueryExpander {
     */
   def extract_ngrams(tokens: Array[String], docID:Int) = {
 
-    var bigram = Array[String]()
-    var trigram = Array[String]()
-
     for (i <- tokens.indices) {
+
+      num_of_words += 1
+
       if (!stopwords.contains(tokens(i))) {
 
         //unigrams: only non-stopword tokens
         update_nGram_Map(tokens(i), unigrams, docID)
 
-        bigram = Array()
-        trigram = Array()
+        var bigram = Array[String]()
+        var trigram = Array[String]()
 
         //skip-gram counter
         var ngramCounter = 0
@@ -168,9 +168,11 @@ object QueryExpander {
               update_nGram_Map(bigram.mkString(" "), bigrams, docID)
               bigram_complete = true
             }
+
             else if (ngramCounter == 3 && !trigram_complete) {
               update_nGram_Map(trigram.mkString(" "), trigrams, docID)
               trigram_complete = true
+              lookahead_i = tokens.length //soft break of while condition
             }
           }
           lookahead_i += 1
@@ -193,13 +195,39 @@ object QueryExpander {
         val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
 
         //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        extract_ngrams("the house of cards is a series about a house of cards in government".split(" "), doc_id)
+        extract_ngrams(words, doc_id)
 
-        unigrams
-        bigrams
-        trigrams
-        val x = "bla"
       }
+
+      var input = ""
+      while (true) {
+        print("\nquery-expander: " + input)
+        input += scala.io.StdIn.readLine()
+
+        val candidates =  extract_candidates(input, unigrams)
+                              .map(unigram => (unigram, get_frequency(unigram, unigrams))) ++
+                          extract_candidates(input, bigrams)
+                              .map(bigram => (bigram, get_frequency(bigram, bigrams))) ++
+                          extract_candidates(input, trigrams)
+                              .map(trigram => (trigram, get_frequency(trigram, trigrams)))
+
+        candidates.sortBy(_._2)   //sort by score
+                  .reverse        //descending order
+                  .take(10)       //top 10 results
+                  .foreach(tuple => println(tuple._1))
+
+        input = candidates.sortBy(_._2)   //sort by score
+                          .reverse        //descending order
+                          .head._1
+      }
+
+      //extract_ngrams("the house of cards the series".split(" "), 1)
+
+      unigrams
+      bigrams
+      trigrams
+      num_of_words
+      val x = "bla"
 
     }
   }
