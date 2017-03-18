@@ -1,7 +1,6 @@
 package com.ir
 
 import java.util.regex.Pattern
-
 import scala.collection.mutable
 import scala.io.Source
 import java.io.File
@@ -16,13 +15,12 @@ object QueryExpander {
   val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val docs2IDs = mutable.HashMap[String, Int]()
-  var num_of_words = 0
-  var doc_id = 0
+  var num_of_words = 0 //TODO: can be deleted
   var format = ""
-
+  val k = 20 //parameter: top k results
 
   /**
-    * extracts a word array of a conllu format file that contains only words (no punctuation) and is lowercased
+    * extracts a word array of a conll format file that contains only words (no punctuation) and is lowercased
     * @param file : a String that denotes the input file
     * @return the array of words contained in that file
     */
@@ -45,129 +43,26 @@ object QueryExpander {
     }
 
     val spacePattern = Pattern.compile(delimiter)
-
     words.filter(!spacePattern.matcher(_).find()).toArray
-  }
-
-
-  /**
-    * calculates the inverse document frequency for a given term,
-    * can be extracted by using the number of total documents and the number of documents
-    * containing the term
-    *
-    * @param term a String
-    * @return the IDF as a Float
-    */
-  def getIDF(term: String): Float = {
-    val df = unigrams.getOrElse(term, Array()).length
-    val num_of_docs = get_num_docs()
-
-    Math.log(num_of_docs / df).toFloat
-  }
-
-  /**
-    * take a term and sum all the frequencies from all documents that contain that term
-    * @param term
-    * @return the total frequency of a term in a corpus
-    */
-  def get_frequency(term: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Int = {
-    ngramMap(term).map(_(1)).sum
-  }
-
-  /**
-    * take a list of candidate completion words and return the sum of the product of the frequency and the IDF of a term:
-    * Sum: (#candidate*IDF(candidate)
-    * this can be used as the normalization factor in the probability calculation for the most probable term
-    * @param candidates
-    * @return a Float = normalization factor
-    */
-  def get_sum_of_IDFs(candidates: Array[String], ngramMap: mutable.HashMap[String, Array[Array[Int]]]):Float = {
-
-    candidates.map(candidate => getIDF(candidate) * get_frequency(candidate, ngramMap)).sum
-  }
-
-  /**
-    * This calculation gives the probability that a term is the completion:
-    * p(completion|partial word)
-    * @param term a candidate completion word
-    * @param normalizationfactor
-    * @return the probability of that term
-    */
-  def completion_probability(term:String,
-                             normalizationfactor: Float,
-                             ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
-
-    get_frequency(term, ngramMap) * getIDF(term) / normalizationfactor
-  }
-
-  /**
-    * for a given query word this method extracts all words that are possible word completions of that
-    * query word
-    *
-    * @param start a String = query word
-    * @return an Array of Strings that contains the candidate word completions
-    */
-  def extract_candidates(start: String,
-                         ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
-
-    ngramMap.keySet.filter(_.startsWith(start)).toArray
-  }
-
-  def get_avg_nGram_freq( ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
-    ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
-  }
-
-  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Double = {
-    get_frequency(ngram, ngramMap) / Math.log(get_avg_nGram_freq(ngramMap))
-  }
-
-  def extract_phrase_candidates(term:String):(Array[String], Array[String]) = {
-    val bigramcandidates = bigrams.keySet.filter(_.contains(term))
-    val trigramcandidates = trigrams.keySet.filter(_.contains(term))
-
-    (bigramcandidates.toArray, trigramcandidates.toArray)
-  }
-
-  def term_phrase_probability(term: String, phrase:String,
-                              ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
-
-    nGram_norm(phrase, ngramMap)//TODO /
-  }
-
-  def update_docs2IDs(doc: String) = {
-    docs2IDs.put(doc, doc_id)
-    doc_id += 1
   }
 
   /**
     * //TODO
-    * @param ngram
-    * @param ngramMap
-    * @param docID
-    * @return
+    * @param files
     */
-  def update_ngramMap(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int) = {
+  def create_ngrams(files: Array[File]): Unit = {
 
-    if (!ngramMap.contains(ngram)) {              //ngram new to Map -> new entry with new docID & freq 1
-      ngramMap.put(ngram, Array(Array(docID, 1)))
-    }
-    else {                                        //ngram already in Map, either with same or new docID
-      var doclist = ngramMap(ngram)
-      var index = 0
-      var new_docID = true
-      for (freqpair <- doclist) {
-        if (freqpair.head == docID) {             //ngram with docID exists in Map -> update freq
-          doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
-          ngramMap.update(ngram, doclist)
-          new_docID = false
-        }
-        index += 1
-      }
+    var doc_id = 0
 
-      if (new_docID) {                            //ngram exists in Map, but given docID is new
-        doclist :+= Array(docID, 1)                 //append new docID - freq entry
-        ngramMap.update(ngram, doclist)
-      }
+    for (file <- files) {
+      val words = preprocessing(file.toString, format)
+      val doc = file.toString.split("/").last//.replace(".conll", "").toInt
+
+      //println("Reading doc " + doc + ", new docID: " + doc_id)//(files.indexOf(file)+1))
+      extract_ngrams(words, doc_id)
+      docs2IDs.put(doc, doc_id)
+
+      doc_id += 1
     }
   }
 
@@ -205,7 +100,7 @@ object QueryExpander {
           trigram :+= token
 
           if (!stopwords.contains(token)) {
-              ngramCounter += 1
+            ngramCounter += 1
 
             if (ngramCounter == 2 && !bigram_complete) {
               update_ngramMap(bigram.mkString(" "), bigrams, docID)
@@ -226,27 +121,150 @@ object QueryExpander {
 
   /**
     * //TODO
+    * @param ngram
+    * @param ngramMap
+    * @param docID
     * @return
     */
-  def get_num_docs() = docs2IDs.size
+  def update_ngramMap(ngram: String,
+                      ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int): Unit = {
+
+    if (!ngramMap.contains(ngram)) {              //ngram new to Map -> new entry with new docID & freq 1
+      ngramMap.put(ngram, Array(Array(docID, 1)))
+    }
+    else {                                        //ngram already in Map, either with same or new docID
+    var doclist = ngramMap(ngram)
+      var index = 0
+      var new_docID = true
+      for (freqpair <- doclist) {
+        if (freqpair.head == docID) {             //ngram with docID exists in Map -> update freq
+          doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
+          ngramMap.update(ngram, doclist)
+          new_docID = false
+        }
+        index += 1
+      }
+
+      if (new_docID) {                            //ngram exists in Map, but given docID is new
+        doclist :+= Array(docID, 1)                 //append new docID - freq entry
+        ngramMap.update(ngram, doclist)
+      }
+    }
+  }
+
+  /**
+    * for a given query word this method extracts all words that are possible word completions of that
+    * query word
+    *
+    * @param Qt a String = query word
+    * @return an Array of Strings that contains the candidate word completions
+    */
+  def extract_candidates(Qt: String,
+                         ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Iterable[String] = {
+
+    ngramMap.keys.filter(_.startsWith(Qt))
+  }
+
+  /**
+    * calculates the inverse document frequency for a given term,
+    * can be extracted by using the number of total documents and the number of documents
+    * containing the term
+    *
+    * @param term a String
+    * @return the IDF as a Float
+    */
+  def getIDF(term: String): Float = {
+    var df = unigrams.getOrElse(term, Array()).length
+
+    if (bigrams.contains(term))
+      df = bigrams.getOrElse(term, Array()).length
+    else if (trigrams.contains(term))
+      df = trigrams.getOrElse(term, Array()).length
+
+    Math.log(get_num_docs() / df).toFloat
+  }
+
+  /**
+    * take a term and sum all the frequencies from all documents that contain that term
+    * @param term
+    * @return the total frequency of a term in a corpus
+    */
+  def get_frequency(term: String): Int = {
+    if (unigrams.contains(term))
+      unigrams(term).map(_(1)).sum
+    else if (bigrams.contains(term))
+      bigrams(term).map(_(1)).sum
+    else
+      trigrams(term).map(_(1)).sum
+  }
+
+  /**
+    * take a list of candidate completion words and return the sum of the product of the frequency and the IDF of a term:
+    * Sum: (#candidate*IDF(candidate)
+    * this can be used as the normalization factor in the probability calculation for the most probable term
+    * @param candidates
+    * @return a Float = normalization factor
+    */
+  def get_sum_of_FreqIDFs(candidates: Iterable[String]): Float = {
+    candidates.map(candidate => get_frequency(candidate) * getIDF(candidate)).sum
+  }
+
+  /**
+    * This calculation gives the probability that a term is the completion:
+    * p(completion|partial word)
+    * @param candidate a candidate completion word
+    * @param candidates
+    * @return the probability of that term
+    */
+  def term_completion_prob(candidate: String, candidates: Iterable[String]) = {
+    (get_frequency(candidate) * getIDF(candidate)) / get_sum_of_FreqIDFs(candidates)
+  }
+
+
 
   /**
     * //TODO
-    * @param files
+    * @param ngramMap
+    * @return
     */
-  def create_ngrams(files: Array[File]): Unit = {
-
-    for (file <- files) {
-      val words = preprocessing(file.toString, format)
-      val doc = file.toString.split("/").last//.replace(".conll", "").toInt
-
-      //println("Reading doc " + doc + ", new docID: " + doc_id)//(files.indexOf(file)+1))
-
-      extract_ngrams(words, doc_id)
-      update_docs2IDs(doc)
-    }
-
+  def get_avg_nGram_freq(ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
+    ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
   }
+
+  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Double = {
+    get_frequency(ngram) / Math.log(get_avg_nGram_freq(ngramMap))
+  }
+
+  /**
+    * TODO
+    * @param term
+    * @return
+    */
+  def extract_phrase_candidates(term:String): (Array[String], Array[String]) = {
+    val bigramcandidates = bigrams.keySet.filter(_.contains(term))
+    val trigramcandidates = trigrams.keySet.filter(_.contains(term))
+
+    (bigramcandidates.toArray, trigramcandidates.toArray)
+  }
+
+  /**
+    * TODO
+    * @param term
+    * @param phrase
+    * @param ngramMap
+    * @return
+    */
+  def term_phrase_probability(term: String, phrase:String,
+                              ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
+
+    nGram_norm(phrase, ngramMap)
+  }
+
+  /**
+    * //TODO
+    * @return
+    */
+  def get_num_docs() = docs2IDs.size
 
 
 
@@ -271,21 +289,26 @@ object QueryExpander {
         }
         else input = scala.io.StdIn.readLine()
 
-        val candidates =  extract_candidates(input, unigrams)
-                              .map(unigram => (unigram, get_frequency(unigram, unigrams))) ++
-                          extract_candidates(input, bigrams)
-                              .map(bigram => (bigram, get_frequency(bigram, bigrams))) ++
-                          extract_candidates(input, trigrams)
-                              .map(trigram => (trigram, get_frequency(trigram, trigrams)))
+        val Qk1 = input.split(" ")
+        var Qc  = Qk1.init
+        val Qt  = Qk1.last
+        if (Qc.length == 0) Qc = Array(Qt)
 
-        candidates.sortBy(_._2)   //sort by score
-                  .reverse        //descending order
-                  .take(10)       //top 10 results
-                  .foreach(tuple => println(tuple._1 + " " + tuple._2))//._1))
+        val candidates =  extract_candidates(Qt, unigrams)  ++
+                          extract_candidates(Qt, bigrams)   ++
+                          extract_candidates(Qt, trigrams)
 
-        input = candidates.sortBy(_._2)   //sort by score
-                          .reverse        //descending order
-                          .head._1
+        val completion_ranks = candidates
+          .map(candidate => (candidate, term_completion_prob(candidate, candidates)))
+
+        completion_ranks.toArray.sortBy(_._2)   //sort by score
+          .reverse        //descending order
+          .take(k)       //top k results
+          .foreach(tuple => println(tuple._1 + " " + tuple._2))//._1))
+
+        input = completion_ranks.toArray.sortBy(_._2)   //sort by score
+          .reverse        //descending order
+          .head._1
 
         unigrams
         bigrams
