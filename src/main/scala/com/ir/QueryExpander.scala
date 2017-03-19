@@ -242,26 +242,9 @@ object QueryExpander {
     * @return
     */
   def term2phrase_prob(phrase:String, order: Int) = {
-
-/*    if (order == 1)
-      nGram_norm(phrase, unigrams)
-    else if (order == 2)
-      nGram_norm(phrase, bigrams)
-    else
-      nGram_norm(phrase, trigrams)*/
-
-    nGram_norm(phrase, order)
+    get_frequency(phrase) / Math.log(get_avg_nGram_freq(order)).toFloat
   }
 
-  /**
-    * TODO
-    * @param ngram
-    * @param order
-    * @return
-    */
-  def nGram_norm(ngram: String, order: Int): Float = {
-    get_frequency(ngram) / Math.log(get_avg_nGram_freq(order)).toFloat
-  }
 
   /**
     * //TODO
@@ -287,21 +270,6 @@ object QueryExpander {
     */
   def get_num_docs() = docs2IDs.size
 
-/*  /**
-    * TODO
-    * @param ranks
-    * @param k
-    */
-  def print_ranks(ranks:  Array[((String, (String, Int)), Float)], k: Int): Unit = {
-    ranks.sortBy(_._2)   //sort by score
-      .reverse        //descending order
-      .take(k)       //top k results
-      .foreach(tuple => println("\ncandidate: " + tuple._1._1 +
-                                  "\n phrase: " + tuple._1._2 +
-                                   "\n score: " + tuple._2))
-    println()
-  }*/
-
   /**
     * TODO
     * @param ranks
@@ -314,7 +282,6 @@ object QueryExpander {
       .reverse.take(k)
       .foreach(rank => println(rank._1 + " " + rank._2))
   }
-
 
 
 
@@ -366,25 +333,6 @@ object QueryExpander {
           }
         }
 
-        //phrases & the order of the phrase
-/*        val phrase_candidates = ((term_completion_candidates, 1),
-          (extract_phrases(term_completion_candidates, bigrams), 2),
-          (extract_phrases(term_completion_candidates, trigrams), 3))*/
-
-/*        val term2phrase_ranks = phrase_candidates._1._1
-          .map(phrase => (phrase, term2phrase_prob(phrase, 1))) ++
-                                  phrase_candidates._2._1
-          .map(phrase => (phrase, term2phrase_prob(phrase, 1))) ++
-                                  phrase_candidates._3._1
-          .map(phrase => (phrase, term2phrase_prob(phrase, 1)))*/
-
-/*
-        println("\nTerm completion ranks for: " + input)
-        print_ranks(completion_ranks.toArray, 10)
-
-        println("\nTerm-to-Phrase ranks for: " + input)
-        print_ranks(term2phrase_ranks.toArray, 10)*/
-
         println("\nPhrase Selection Probability ranks for: " + input)
         print_ranks(ranks, 20)
 
@@ -393,8 +341,6 @@ object QueryExpander {
         bigrams
         trigrams
         docs2IDs
-        //phrase_candidates
-        //term2phrase_ranks
         val x = "bla" //set breakpoint here to see data structures
       }
     }
