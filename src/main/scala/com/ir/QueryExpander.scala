@@ -227,29 +227,38 @@ object QueryExpander {
   }
 
   /**
+    * TODO
+    * @param phrase
+    * @param order
+    * @return
+    */
+  def term2phrase_prob(phrase:String, order: Int) = {
+
+    if (order == 1)
+      nGram_norm(phrase, unigrams)
+    else if (order == 2)
+      nGram_norm(phrase, bigrams)
+    else
+      nGram_norm(phrase, trigrams)
+  }
+
+  /**
+    * TODO
+    * @param ngram
+    * @param ngramMap
+    * @return
+    */
+  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
+    get_frequency(ngram) / Math.log(get_avg_nGram_freq(ngramMap)).toFloat
+  }
+
+  /**
     * //TODO
     * @param ngramMap
     * @return
     */
   def get_avg_nGram_freq(ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
     ngramMap.keys.map(key => ngramMap(key).map(_(1)).sum).sum / ngramMap.keys.size
-  }
-
-  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Double = {
-    get_frequency(ngram) / Math.log(get_avg_nGram_freq(ngramMap))
-  }
-
-  /**
-    * TODO
-    * @param term
-    * @param phrase
-    * @param ngramMap
-    * @return
-    */
-  def term_phrase_probability(term: String, phrase:String,
-                              ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
-
-    nGram_norm(phrase, ngramMap)
   }
 
   /**
@@ -302,11 +311,22 @@ object QueryExpander {
 
         //phrases & the order of the phrase
         val phrase_candidates = ( (term_completion_candidates, 1),
-                                      (extract_phrases(term_completion_candidates, bigrams), 2),
-                                      (extract_phrases(term_completion_candidates, trigrams), 3))
+                                  (extract_phrases(term_completion_candidates, bigrams), 2),
+                                  (extract_phrases(term_completion_candidates, trigrams), 3))
+
+        val term2phrase_ranks = phrase_candidates._1._1
+          .map(phrase => (phrase, term2phrase_prob(phrase, 1))) ++
+                                  phrase_candidates._2._1
+          .map(phrase => (phrase, term2phrase_prob(phrase, 1))) ++
+                                  phrase_candidates._3._1
+          .map(phrase => (phrase, term2phrase_prob(phrase, 1)))
+
 
         println("\nTerm completion ranks for: " + input)
         print_ranks(completion_ranks, 10)
+
+        println("\nTerm-to-Phrase ranks for: " + input)
+        print_ranks(term2phrase_ranks, 10)
 
 
         unigrams
@@ -314,7 +334,8 @@ object QueryExpander {
         trigrams
         docs2IDs
         phrase_candidates
-        val x = "bla" //set breakpint here to see data structures
+        term2phrase_ranks
+        val x = "bla" //set breakpoint here to see data structures
       }
     }
   }
