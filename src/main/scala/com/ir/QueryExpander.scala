@@ -175,11 +175,6 @@ object QueryExpander {
   def getIDF(term: String): Float = {
     val df = unigrams.getOrElse(term, Array()).length
 
-    /*if (bigrams.contains(term))
-      df = bigrams.getOrElse(term, Array()).length
-    else if (trigrams.contains(term))
-      df = trigrams.getOrElse(term, Array()).length*/
-
     Math.log(get_num_docs() / df).toFloat
   }
 
@@ -215,11 +210,21 @@ object QueryExpander {
     * @param candidates
     * @return the probability of that term
     */
-  def term_completion_prob(candidate: String, candidates: Iterable[String]) = {
+  def term_completion_prob(candidate: String, candidates: Iterable[String]): Float = {
     (get_frequency(candidate) * getIDF(candidate)) / get_sum_of_FreqIDFs(candidates)
   }
 
+  /**
+    * TODO
+    * @param candidates
+    * @param ngramMap
+    * @return
+    */
+  def extract_phrases(candidates: Iterable[String],
+                      ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Iterable[String] = {
 
+    candidates.flatMap(x => extract_candidates(x, ngramMap))
+  }
 
   /**
     * //TODO
@@ -253,6 +258,11 @@ object QueryExpander {
     */
   def get_num_docs() = docs2IDs.size
 
+  /**
+    * TODO
+    * @param ranks
+    * @param k
+    */
   def print_ranks(ranks:  Iterable[(String, Float)], k: Int): Unit = {
     ranks.toArray.sortBy(_._2)   //sort by score
       .reverse        //descending order
@@ -290,6 +300,10 @@ object QueryExpander {
         val completion_ranks = term_completion_candidates
           .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
+        val uni_phrase_candidates = term_completion_candidates
+        val bi_phrase_candidates  = extract_phrases(term_completion_candidates, bigrams)
+        val tri_phrase_candidates  = extract_phrases(term_completion_candidates, trigrams)
+
         println("\nTerm completion ranks for: " + input)
         print_ranks(completion_ranks, 10)
 
@@ -298,6 +312,10 @@ object QueryExpander {
         bigrams
         trigrams
         docs2IDs
+        uni_phrase_candidates
+        bi_phrase_candidates
+        tri_phrase_candidates
+        val x = "bla" //set breakpint here to see data structures
       }
     }
   }
