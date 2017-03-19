@@ -300,9 +300,10 @@ object QueryExpander {
         val completion_ranks = term_completion_candidates
           .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
-        val uni_phrase_candidates = term_completion_candidates
-        val bi_phrase_candidates  = extract_phrases(term_completion_candidates, bigrams)
-        val tri_phrase_candidates  = extract_phrases(term_completion_candidates, trigrams)
+        //phrases & the order of the phrase
+        val uni_phrase_candidates = (term_completion_candidates, 1)
+        val bi_phrase_candidates  = (extract_phrases(term_completion_candidates, bigrams), 2)
+        val tri_phrase_candidates = (extract_phrases(term_completion_candidates, trigrams), 3)
 
         println("\nTerm completion ranks for: " + input)
         print_ranks(completion_ranks, 10)
