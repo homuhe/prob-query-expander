@@ -301,9 +301,9 @@ object QueryExpander {
           .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
         //phrases & the order of the phrase
-        val uni_phrase_candidates = (term_completion_candidates, 1)
-        val bi_phrase_candidates  = (extract_phrases(term_completion_candidates, bigrams), 2)
-        val tri_phrase_candidates = (extract_phrases(term_completion_candidates, trigrams), 3)
+        val phrase_candidates = ( (term_completion_candidates, 1),
+                                      (extract_phrases(term_completion_candidates, bigrams), 2),
+                                      (extract_phrases(term_completion_candidates, trigrams), 3))
 
         println("\nTerm completion ranks for: " + input)
         print_ranks(completion_ranks, 10)
@@ -313,9 +313,7 @@ object QueryExpander {
         bigrams
         trigrams
         docs2IDs
-        uni_phrase_candidates
-        bi_phrase_candidates
-        tri_phrase_candidates
+        phrase_candidates
         val x = "bla" //set breakpint here to see data structures
       }
     }
