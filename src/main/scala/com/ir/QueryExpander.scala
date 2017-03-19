@@ -174,12 +174,12 @@ object QueryExpander {
     * @return the IDF as a Float
     */
   def getIDF(term: String): Float = {
-    var df = unigrams.getOrElse(term, Array()).length
+    val df = unigrams.getOrElse(term, Array()).length
 
-    if (bigrams.contains(term))
+    /*if (bigrams.contains(term))
       df = bigrams.getOrElse(term, Array()).length
     else if (trigrams.contains(term))
-      df = trigrams.getOrElse(term, Array()).length
+      df = trigrams.getOrElse(term, Array()).length*/
 
     Math.log(get_num_docs() / df).toFloat
   }
@@ -294,9 +294,9 @@ object QueryExpander {
         val Qt  = Qk1.last
         if (Qc.length == 0) Qc = Array(Qt)
 
-        val candidates =  extract_candidates(Qt, unigrams)  ++
-                          extract_candidates(Qt, bigrams)   ++
-                          extract_candidates(Qt, trigrams)
+        val candidates =  extract_candidates(Qt, unigrams)//  ++
+                          //extract_candidates(Qt, bigrams)   ++
+                          //extract_candidates(Qt, trigrams)
 
         val completion_ranks = candidates
           .map(candidate => (candidate, term_completion_prob(candidate, candidates)))
