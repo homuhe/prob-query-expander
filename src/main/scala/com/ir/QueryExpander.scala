@@ -264,6 +264,10 @@ object QueryExpander {
     tri_norm  = trigrams.keys.map(key => trigrams(key).map(_(1)).sum).sum / trigrams.keys.size
   }
 
+  def phrase_query_corr(Qc: String, phrase: String): Int = {
+    1
+  }
+
   /**
     * //TODO
     * @return
@@ -316,8 +320,7 @@ object QueryExpander {
 
         for ((ci, term_comp_prob) <- completion_ranks) {
 
-          val phrases_all_orders = extract_phrases(ci)
-          for ((phrases, order) <- phrases_all_orders) {
+          for ((phrases, order) <- extract_phrases(ci)) {
 
             for (phrase <- phrases) {
 
@@ -330,11 +333,14 @@ object QueryExpander {
                 ranks.update(phrase, phrase_selection_prob)
             }
 
+            phrases.foreach(phrase => ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc.last, phrase))))
+
           }
         }
 
-        println("\nPhrase Selection Probability ranks for: " + input)
+        println("\nPhrase Selection Probability Ranking for: " + input)
         print_ranks(ranks, 20)
+        println
 
 
         unigrams
