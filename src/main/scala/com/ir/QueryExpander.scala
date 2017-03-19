@@ -17,7 +17,6 @@ object QueryExpander {
   val docs2IDs = mutable.HashMap[String, Int]()
   var num_of_words = 0 //TODO: can be deleted
   var format = ""
-  val k = 10 //parameter: top k results
 
   /**
     * extracts a word array of a conll format file that contains only words (no punctuation) and is lowercased
@@ -228,23 +227,11 @@ object QueryExpander {
     * @return
     */
   def get_avg_nGram_freq(ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
-    ngramMap.keySet.map(key => ngramMap(key).map(_(1)).sum).sum/ngramMap.keySet.size
+    ngramMap.keys.map(key => ngramMap(key).map(_(1)).sum).sum / ngramMap.keys.size
   }
 
   def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Double = {
     get_frequency(ngram) / Math.log(get_avg_nGram_freq(ngramMap))
-  }
-
-  /**
-    * TODO
-    * @param term
-    * @return
-    */
-  def extract_phrase_candidates(term:String): (Array[String], Array[String]) = {
-    val bigramcandidates = bigrams.keySet.filter(_.contains(term))
-    val trigramcandidates = trigrams.keySet.filter(_.contains(term))
-
-    (bigramcandidates.toArray, trigramcandidates.toArray)
   }
 
   /**
@@ -266,6 +253,13 @@ object QueryExpander {
     */
   def get_num_docs() = docs2IDs.size
 
+  def print_ranks(ranks:  Iterable[(String, Float)], k: Int): Unit = {
+    ranks.toArray.sortBy(_._2)   //sort by score
+      .reverse        //descending order
+      .take(k)       //top k results
+      .foreach(tuple => println(tuple._1 + " " + tuple._2))
+  }
+
 
 
   def main(args: Array[String]) {
@@ -277,38 +271,26 @@ object QueryExpander {
       val files = new File(args(0)).listFiles
 
       create_ngrams(files)
-
-      var input = ""
       var prev_input = " "
       while (true) {
         print("\nquery-expander: ")
 
-        if (input != prev_input) {
-          prev_input = input
-          input += scala.io.StdIn.readLine(input)
-        }
-        else input = scala.io.StdIn.readLine()
+        val input = scala.io.StdIn.readLine()
 
         val Qk1 = input.split(" ")
         var Qc  = Qk1.init
         val Qt  = Qk1.last
         if (Qc.length == 0) Qc = Array(Qt)
 
-        val candidates =  extract_candidates(Qt, unigrams)//  ++
+        val term_completion_candidates =  extract_candidates(Qt, unigrams)//  ++
                           //extract_candidates(Qt, bigrams)   ++
                           //extract_candidates(Qt, trigrams)
 
-        val completion_ranks = candidates
-          .map(candidate => (candidate, term_completion_prob(candidate, candidates)))
+        val completion_ranks = term_completion_candidates
+          .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
-        completion_ranks.toArray.sortBy(_._2)   //sort by score
-          .reverse        //descending order
-          .take(k)       //top k results
-          .foreach(tuple => println(tuple._1 + " " + tuple._2))
+        print_ranks(completion_ranks, 10)
 
-        input = completion_ranks.toArray.sortBy(_._2)
-          .reverse
-          .head._1
 
         unigrams
         bigrams
