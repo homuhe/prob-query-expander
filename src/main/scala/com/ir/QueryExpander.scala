@@ -258,6 +258,7 @@ object QueryExpander {
       .reverse        //descending order
       .take(k)       //top k results
       .foreach(tuple => println(tuple._1 + " " + tuple._2))
+    println()
   }
 
 
@@ -271,16 +272,16 @@ object QueryExpander {
       val files = new File(args(0)).listFiles
 
       create_ngrams(files)
-      var prev_input = " "
+
       while (true) {
-        print("\nquery-expander: ")
+        print("query-expander: ")
 
         val input = scala.io.StdIn.readLine()
 
         val Qk1 = input.split(" ")
         var Qc  = Qk1.init
         val Qt  = Qk1.last
-        if (Qc.length == 0) Qc = Array(Qt)
+        if (Qc.length == 0) Qc = Array(Qt) //TODO
 
         val term_completion_candidates =  extract_candidates(Qt, unigrams)//  ++
                           //extract_candidates(Qt, bigrams)   ++
@@ -289,6 +290,7 @@ object QueryExpander {
         val completion_ranks = term_completion_candidates
           .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
+        println("\nTerm completion ranks for: " + input)
         print_ranks(completion_ranks, 10)
 
 
