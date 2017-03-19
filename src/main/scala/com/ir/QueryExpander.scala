@@ -17,7 +17,7 @@ object QueryExpander {
   val docs2IDs = mutable.HashMap[String, Int]()
   var num_of_words = 0 //TODO: can be deleted
   var format = ""
-  val k = 20 //parameter: top k results
+  val k = 10 //parameter: top k results
 
   /**
     * extracts a word array of a conll format file that contains only words (no punctuation) and is lowercased
@@ -174,12 +174,12 @@ object QueryExpander {
     * @return the IDF as a Float
     */
   def getIDF(term: String): Float = {
-    var df = unigrams.getOrElse(term, Array()).length
+    val df = unigrams.getOrElse(term, Array()).length
 
-    if (bigrams.contains(term))
+    /*if (bigrams.contains(term))
       df = bigrams.getOrElse(term, Array()).length
     else if (trigrams.contains(term))
-      df = trigrams.getOrElse(term, Array()).length
+      df = trigrams.getOrElse(term, Array()).length*/
 
     Math.log(get_num_docs() / df).toFloat
   }
@@ -294,9 +294,9 @@ object QueryExpander {
         val Qt  = Qk1.last
         if (Qc.length == 0) Qc = Array(Qt)
 
-        val candidates =  extract_candidates(Qt, unigrams)  ++
-                          extract_candidates(Qt, bigrams)   ++
-                          extract_candidates(Qt, trigrams)
+        val candidates =  extract_candidates(Qt, unigrams)//  ++
+                          //extract_candidates(Qt, bigrams)   ++
+                          //extract_candidates(Qt, trigrams)
 
         val completion_ranks = candidates
           .map(candidate => (candidate, term_completion_prob(candidate, candidates)))
@@ -304,10 +304,10 @@ object QueryExpander {
         completion_ranks.toArray.sortBy(_._2)   //sort by score
           .reverse        //descending order
           .take(k)       //top k results
-          .foreach(tuple => println(tuple._1 + " " + tuple._2))//._1))
+          .foreach(tuple => println(tuple._1 + " " + tuple._2))
 
-        input = completion_ranks.toArray.sortBy(_._2)   //sort by score
-          .reverse        //descending order
+        input = completion_ranks.toArray.sortBy(_._2)
+          .reverse
           .head._1
 
         unigrams
