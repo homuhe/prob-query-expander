@@ -17,6 +17,9 @@ object QueryExpander {
   val docs2IDs = mutable.HashMap[String, Int]()
   var num_of_words = 0 //TODO: can be deleted
   var format = ""
+  var uni_norm: Float = 0
+  var bi_norm: Float = 0
+  var tri_norm: Float = 0
 
   /**
     * extracts a word array of a conll format file that contains only words (no punctuation) and is lowercased
@@ -221,35 +224,44 @@ object QueryExpander {
     * @return
     */
   def extract_phrases(candidates: Iterable[String],
-                      ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Iterable[String] = {
+                      ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Iterable[String] = { //to DELETE
 
     candidates.flatMap(x => extract_candidates(x, ngramMap))
   }
 
-  /**
-    * //TODO
-    * @param ngramMap
-    * @return
-    */
-  def get_avg_nGram_freq(ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Float = {
-    ngramMap.keys.map(key => ngramMap(key).map(_(1)).sum).sum / ngramMap.keys.size
-  }
-
-  def nGram_norm(ngram: String, ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Double = {
-    get_frequency(ngram) / Math.log(get_avg_nGram_freq(ngramMap))
+  def extract_phrases(candidate: String): Array[(Iterable[String], Int)] = {
+    Array((extract_candidates(candidate, unigrams), 1),
+          (extract_candidates(candidate, bigrams), 2),
+          (extract_candidates(candidate, trigrams), 3))
   }
 
   /**
     * TODO
-    * @param term
     * @param phrase
-    * @param ngramMap
+    * @param order
     * @return
     */
-  def term_phrase_probability(term: String, phrase:String,
-                              ngramMap: mutable.HashMap[String, Array[Array[Int]]]) = {
+  def term2phrase_prob(phrase:String, order: Int) = {
+    get_frequency(phrase) / Math.log(get_avg_nGram_freq(order)).toFloat
+  }
 
-    nGram_norm(phrase, ngramMap)
+
+  /**
+    * //TODO
+    * @param order
+    * @return
+    */
+  def get_avg_nGram_freq(order: Int): Float = {
+    if (order == 1) uni_norm
+    else if (order == 2) bi_norm
+    else tri_norm
+
+  }
+
+  def generate_nGram_norms() {
+    uni_norm  = unigrams.keys.map(key => unigrams(key).map(_(1)).sum).sum / unigrams.keys.size
+    bi_norm    =  bigrams.keys.map(key => bigrams(key).map(_(1)).sum).sum / bigrams.keys.size
+    tri_norm  = trigrams.keys.map(key => trigrams(key).map(_(1)).sum).sum / trigrams.keys.size
   }
 
   /**
@@ -263,12 +275,12 @@ object QueryExpander {
     * @param ranks
     * @param k
     */
-  def print_ranks(ranks:  Iterable[(String, Float)], k: Int): Unit = {
-    ranks.toArray.sortBy(_._2)   //sort by score
-      .reverse        //descending order
-      .take(k)       //top k results
-      .foreach(tuple => println(tuple._1 + " " + tuple._2))
-    println()
+  def print_ranks(ranks: mutable.HashMap[String, Float], k: Int): Unit = {
+    ranks
+      .toSeq.filter(_._2 > 0.001)
+      .sortBy(_._2)
+      .reverse.take(k)
+      .foreach(rank => println(rank._1 + " " + rank._2))
   }
 
 
@@ -282,6 +294,7 @@ object QueryExpander {
       val files = new File(args(0)).listFiles
 
       create_ngrams(files)
+      generate_nGram_norms()
 
       while (true) {
         print("query-expander: ")
@@ -293,30 +306,42 @@ object QueryExpander {
         val Qt  = Qk1.last
         if (Qc.length == 0) Qc = Array(Qt) //TODO
 
-        val term_completion_candidates =  extract_candidates(Qt, unigrams)//  ++
-                          //extract_candidates(Qt, bigrams)   ++
-                          //extract_candidates(Qt, trigrams)
+        val term_completion_candidates =  extract_candidates(Qt , unigrams).toSet
 
         val completion_ranks = term_completion_candidates
           .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
-        //phrases & the order of the phrase
-        val uni_phrase_candidates = (term_completion_candidates, 1)
-        val bi_phrase_candidates  = (extract_phrases(term_completion_candidates, bigrams), 2)
-        val tri_phrase_candidates = (extract_phrases(term_completion_candidates, trigrams), 3)
+        // ranks: phrase, score
+        val ranks = mutable.HashMap[String, Float]()
 
-        println("\nTerm completion ranks for: " + input)
-        print_ranks(completion_ranks, 10)
+        for ((ci, term_comp_prob) <- completion_ranks) {
+
+          val phrases_all_orders = extract_phrases(ci)
+          for ((phrases, order) <- phrases_all_orders) {
+
+            for (phrase <- phrases) {
+
+              //PHRASE SELECTION PROBABILITY = TERM COMPLETION PROB x TERM TO PHRASE PROB
+              val phrase_selection_prob = term_comp_prob * term2phrase_prob(phrase, order)
+
+              if (!ranks.contains(phrase))
+                ranks.put(phrase, phrase_selection_prob)
+              else if (ranks.contains(phrase) && phrase_selection_prob > ranks(phrase))
+                ranks.update(phrase, phrase_selection_prob)
+            }
+
+          }
+        }
+
+        println("\nPhrase Selection Probability ranks for: " + input)
+        print_ranks(ranks, 20)
 
 
         unigrams
         bigrams
         trigrams
         docs2IDs
-        uni_phrase_candidates
-        bi_phrase_candidates
-        tri_phrase_candidates
-        val x = "bla" //set breakpint here to see data structures
+        val x = "bla" //set breakpoint here to see data structures
       }
     }
   }
