@@ -169,24 +169,5 @@ object QueryExpander {
   }
 
 
-  def main(args: Array[String]) {
-    val pe = new PhraseExtractor
-
-    if (args.length != 1) println("Not enough arguments!")
-    else {
-      val files = new java.io.File(args(0)).listFiles
-      num_of_docs = files.size
-
-      for (file <- files) {
-        val words = pe.preprocessing(file.toString)
-        val doc_id = file.toString.split("/").last.replace(".conll", "").toInt
-
-        //println("doc_id: " + doc_id + ", file number: " + (files.indexOf(file)+1))
-        extract_ngrams(words, doc_id)
-      }
-
-    }
-  }
-
 
 }
