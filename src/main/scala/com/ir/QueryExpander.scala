@@ -241,8 +241,8 @@ object QueryExpander {
     * @param order
     * @return
     */
-  def term2phrase_prob(phrase:String, order: Int) = {
-    get_frequency(phrase) / Math.log(get_avg_nGram_freq(order)).toFloat
+  def term2phrase_prob(phrase:String, order: Int, phrases:Array[String]) = {
+    freqNorm(phrase, order) / phrases.map(phrase => freqNorm(phrase, order)).sum
   }
 
 
@@ -259,13 +259,31 @@ object QueryExpander {
   }
 
   def generate_nGram_norms() {
-    uni_norm  = unigrams.keys.map(key => unigrams(key).map(_(1)).sum).sum / unigrams.keys.size
-    bi_norm    =  bigrams.keys.map(key => bigrams(key).map(_(1)).sum).sum / bigrams.keys.size
-    tri_norm  = trigrams.keys.map(key => trigrams(key).map(_(1)).sum).sum / trigrams.keys.size
+    uni_norm = unigrams.keys.map(key => unigrams(key).map(_ (1)).sum).sum / unigrams.keys.size
+    bi_norm = bigrams.keys.map(key => bigrams(key).map(_(1))).toArray.map(_.sum).sum /bigrams.keys.size
+    tri_norm = trigrams.keys.map(key => trigrams(key).map(_ (1))).toArray.map(_.sum).sum/trigrams.keys.size
   }
+ def freqNorm(phrase:String, order:Int):Float = {
+   get_frequency(phrase)/
+   Math.log(get_avg_nGram_freq(order))
+     .toFloat
+ }
 
-  def phrase_query_corr(Qc: String, phrase: String): Int = {
-    1
+  def phrase_query_corr(Qc: Array[String], phrase: String): Float = {
+    def get_postingList_for_Qc(Qc: Array[String]):Array[Int] = {
+      val all_postings = Qc.map(word => unigrams(word).map(el => el(0)))
+      val intersection = all_postings.reduceLeft(_.intersect(_))
+      intersection
+    }
+    var posting = Array[Int]()
+    if (unigrams.contains(phrase)){
+      posting = unigrams(phrase).map(_(0))}
+    else if (bigrams.contains(phrase)){
+     posting = bigrams(phrase).map(_(0))}
+    else{
+      posting = trigrams(phrase).map(_(0))}
+    val postingList = get_postingList_for_Qc(Qc).intersect(posting)
+    postingList.length/posting.length
   }
 
   /**
@@ -309,7 +327,6 @@ object QueryExpander {
         var Qc  = Qk1.init
         val Qt  = Qk1.last
         if (Qc.length == 0) Qc = Array(Qt) //TODO
-
         val term_completion_candidates =  extract_candidates(Qt , unigrams).toSet
 
         val completion_ranks = term_completion_candidates
@@ -325,7 +342,7 @@ object QueryExpander {
             for (phrase <- phrases) {
 
               //PHRASE SELECTION PROBABILITY = TERM COMPLETION PROB x TERM TO PHRASE PROB
-              val phrase_selection_prob = term_comp_prob * term2phrase_prob(phrase, order)
+              val phrase_selection_prob = term_comp_prob * term2phrase_prob(phrase, order, phrases.toArray)
 
               if (!ranks.contains(phrase))
                 ranks.put(phrase, phrase_selection_prob)
@@ -333,10 +350,10 @@ object QueryExpander {
                 ranks.update(phrase, phrase_selection_prob)
             }
 
-            phrases.foreach(phrase => ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc.last, phrase))))
-
+            phrases.foreach(phrase => ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase))))
           }
         }
+
 
         println("\nPhrase Selection Probability Ranking for: " + input)
         print_ranks(ranks, 20)
