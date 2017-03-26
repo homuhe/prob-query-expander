@@ -20,7 +20,6 @@ object QueryExpander {
   var uni_norm: Float = 0
   var bi_norm: Float = 0
   var tri_norm: Float = 0
-
   /**
     * extracts a word array of a conll format file that contains only words (no punctuation) and is lowercased
     * @param file : a String that denotes the input file
