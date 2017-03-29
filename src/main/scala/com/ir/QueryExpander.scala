@@ -314,7 +314,6 @@ object QueryExpander {
     else {
       if (args.length == 2) format = args(1)
 
-      math.random
       val input = new File(args(0)).listFiles
       val files = input.take(input.length / 2)
 
