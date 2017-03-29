@@ -79,11 +79,12 @@ object QueryExpander {
     for (i <- tokens.indices) {
 
       num_of_words += 1
+      update_ngramMap(tokens(i), unigrams, docID)
 
       if (!stopwords.contains(tokens(i))) {
 
         //unigrams: only non-stopword tokens
-        update_ngramMap(tokens(i), unigrams, docID)
+        //update_ngramMap(tokens(i), unigrams, docID)
 
         var bigram = Array[String]()
         var trigram = Array[String]()
@@ -219,16 +220,9 @@ object QueryExpander {
 
   /**
     * TODO
-    * @param candidates
-    * @param ngramMap
+    * @param candidate
     * @return
     */
-  def extract_phrases(candidates: Iterable[String],
-                      ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Iterable[String] = { //to DELETE
-
-    candidates.flatMap(x => extract_candidates(x, ngramMap))
-  }
-
   def extract_phrases(candidate: String): Array[(Iterable[String], Int)] = {
     Array((extract_candidates(candidate, unigrams), 1),
           (extract_candidates(candidate, bigrams), 2),
@@ -241,7 +235,8 @@ object QueryExpander {
     * @param order
     * @return
     */
-  def term2phrase_prob(phrase:String, order: Int, phrases:Array[String]) = {
+  def term2phrase_prob(phrase:String, order: Int, phrases: Iterable[String]) = {
+
     freqNorm(phrase, order) / phrases.map(phrase => freqNorm(phrase, order)).sum
   }
 
@@ -263,6 +258,7 @@ object QueryExpander {
     bi_norm = bigrams.keys.map(key => bigrams(key).map(_(1))).toArray.map(_.sum).sum /bigrams.keys.size
     tri_norm = trigrams.keys.map(key => trigrams(key).map(_ (1))).toArray.map(_.sum).sum/trigrams.keys.size
   }
+
  def freqNorm(phrase:String, order:Int):Float = {
    get_frequency(phrase)/
    Math.log(get_avg_nGram_freq(order))
@@ -270,11 +266,13 @@ object QueryExpander {
  }
 
   def phrase_query_corr(Qc: Array[String], phrase: String): Float = {
+
     def get_postingList_for_Qc(Qc: Array[String]):Array[Int] = {
       val all_postings = Qc.map(word => unigrams(word).map(el => el(0)))
       val intersection = all_postings.reduceLeft(_.intersect(_))
       intersection
     }
+
     var posting = Array[Int]()
     if (unigrams.contains(phrase)){
       posting = unigrams(phrase).map(_(0))}
@@ -324,42 +322,51 @@ object QueryExpander {
         val input = scala.io.StdIn.readLine()
 
         val Qk1 = input.split(" ")
-        var Qc  = Qk1.init
+        val Qc  = Qk1.init
         val Qt  = Qk1.last
-        if (Qc.length == 0) Qc = Array(Qt) //TODO
-        val term_completion_candidates =  extract_candidates(Qt , unigrams).toSet
+        val term_completion_candidates =  extract_candidates(Qt , unigrams)
 
         val completion_ranks = term_completion_candidates
           .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
+          .toArray.sortWith(_._2 > _._2)
 
-        // ranks: phrase, score
-        val ranks = mutable.HashMap[String, Float]()
+        if (Qc.length == 0)
+          completion_ranks.foreach(println(_))
 
-        for ((ci, term_comp_prob) <- completion_ranks) {
+        else {
 
-          for ((phrases, order) <- extract_phrases(ci)) {
+          // ranks: phrase, score
+          val ranks = mutable.HashMap[String, Float]()
 
-            for (phrase <- phrases) {
+          for ((ci, term_comp_prob) <- completion_ranks) {
 
-              //PHRASE SELECTION PROBABILITY = TERM COMPLETION PROB x TERM TO PHRASE PROB
-              val phrase_selection_prob = term_comp_prob * term2phrase_prob(phrase, order, phrases.toArray)
+            for ((phrases, order) <- extract_phrases(ci)) {
 
-              if (!ranks.contains(phrase))
-                ranks.put(phrase, phrase_selection_prob)
-              else if (ranks.contains(phrase) && phrase_selection_prob > ranks(phrase))
-                ranks.update(phrase, phrase_selection_prob)
+              for (phrase <- phrases) {
+
+                //PHRASE SELECTION PROBABILITY = TERM COMPLETION PROB x TERM TO PHRASE PROB
+                val phrase_selection_prob = term_comp_prob * term2phrase_prob(phrase, order, phrases)
+
+                if (!ranks.contains(phrase))
+                  ranks.put(phrase, phrase_selection_prob)
+                else if (ranks.contains(phrase) && phrase_selection_prob > ranks(phrase))
+                  ranks.update(phrase, phrase_selection_prob)
+
+                //ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase))) NEWER BUT NOT EFFICIENT
+              }
+
+              //phrases.foreach(phrase => ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase)))) OLD
             }
-
-            phrases.foreach(phrase => ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase))))
           }
+
+
+          println("\nPhrase Selection Probability Ranking for: " + input)
+          print_ranks(ranks, 20)
+          println
         }
 
 
-        println("\nPhrase Selection Probability Ranking for: " + input)
-        print_ranks(ranks, 20)
-        println
-
-
+        term_completion_candidates
         unigrams
         bigrams
         trigrams
