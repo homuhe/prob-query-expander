@@ -11,9 +11,9 @@ import java.io.File
 object QueryExpander {
 
   val stopwords = List("is", "this", "the", "of", "in", "to", "per", "the", "by", "a")
-  val unigrams = mutable.HashMap[String, Array[Array[Int]]]()
-  val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
-  val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
+  val unigrams = mutable.HashMap[String, Array[(Int, Int)]]()
+  val bigrams = mutable.HashMap[String, Array[(Int, Int)]]()
+  val trigrams = mutable.HashMap[String, Array[(Int, Int)]]()
   val docs2IDs = mutable.HashMap[String, Int]()
   var num_of_words = 0 //TODO: can be deleted
   var format = ""
@@ -130,18 +130,18 @@ object QueryExpander {
     * @return
     */
   def update_ngramMap(ngram: String,
-                      ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int): Unit = {
+                      ngramMap: mutable.HashMap[String, Array[(Int, Int)]], docID:Int): Unit = {
 
     if (!ngramMap.contains(ngram)) {              //ngram new to Map -> new entry with new docID & freq 1
-      ngramMap.put(ngram, Array(Array(docID, 1)))
+      ngramMap.put(ngram, Array((docID, 1)))
     }
     else {                                        //ngram already in Map, either with same or new docID
     var doclist = ngramMap(ngram)
       var index = 0
       var new_docID = true
-      for (freqpair <- doclist) {
-        if (freqpair.head == docID) {             //ngram with docID exists in Map -> update freq
-          doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
+      for ((current_id, freq) <- doclist) {
+        if (current_id == docID) {             //ngram with docID exists in Map -> update freq
+          doclist.update(index, (current_id, freq + 1))
           ngramMap.update(ngram, doclist)
           new_docID = false
         }
@@ -149,7 +149,7 @@ object QueryExpander {
       }
 
       if (new_docID) {                            //ngram exists in Map, but given docID is new
-        doclist :+= Array(docID, 1)                 //append new docID - freq entry
+        doclist :+= (docID, 1)                 //append new docID - freq entry
         ngramMap.update(ngram, doclist)
       }
     }
@@ -163,7 +163,7 @@ object QueryExpander {
     * @return an Array of Strings that contains the candidate word completions
     */
   def extract_candidates(Qt: String,
-                         ngramMap: mutable.HashMap[String, Array[Array[Int]]]): Iterable[String] = {
+                         ngramMap: mutable.HashMap[String, Array[(Int, Int)]]): Iterable[String] = {
 
     ngramMap.keys.filter(_.startsWith(Qt))
   }
@@ -189,11 +189,11 @@ object QueryExpander {
     */
   def get_frequency(term: String): Int = {
     if (unigrams.contains(term))
-      unigrams(term).map(_(1)).sum
+      unigrams(term).map(_._2).sum
     else if (bigrams.contains(term))
-      bigrams(term).map(_(1)).sum
+      bigrams(term).map(_._2).sum
     else
-      trigrams(term).map(_(1)).sum
+      trigrams(term).map(_._2).sum
   }
 
   /**
@@ -254,9 +254,9 @@ object QueryExpander {
   }
 
   def generate_nGram_norms() {
-    uni_norm = unigrams.keys.map(key => unigrams(key).map(_ (1)).sum).sum / unigrams.keys.size
-    bi_norm = bigrams.keys.map(key => bigrams(key).map(_(1))).toArray.map(_.sum).sum /bigrams.keys.size
-    tri_norm = trigrams.keys.map(key => trigrams(key).map(_ (1))).toArray.map(_.sum).sum/trigrams.keys.size
+    uni_norm  = unigrams.keys.map(key => unigrams(key).map(_._2).sum).sum  / unigrams.keys.size
+    bi_norm   = bigrams.keys.map(key  => bigrams(key).map(_._2).sum).sum   / bigrams.keys.size
+    tri_norm  = trigrams.keys.map(key => trigrams(key).map(_._2).sum).sum  / trigrams.keys.size
   }
 
  def freqNorm(phrase:String, order:Int):Float = {
@@ -265,10 +265,11 @@ object QueryExpander {
      .toFloat
  }
 
+
   def phrase_query_corr(Qc: Array[String], phrase: String): Float = {
 
-    def get_postingList_for_Qc(Qc: Array[String]):Array[Int] = {
-      val all_postings = Qc.map(word => unigrams(word).map(el => el(0)))
+    /*def get_postingList_for_Qc(Qc: Array[String]):Array[Int] = {
+      val all_postings = Qc.map(word => unigrams(word) .map(el => el(0)))
       val intersection = all_postings.reduceLeft(_.intersect(_))
       intersection
     }
@@ -281,7 +282,8 @@ object QueryExpander {
     else{
       posting = trigrams(phrase).map(_(0))}
     val postingList = get_postingList_for_Qc(Qc).intersect(posting)
-    postingList.length/posting.length
+    postingList.length/posting.length*/
+    1.toFloat
   }
 
   /**
@@ -298,8 +300,9 @@ object QueryExpander {
   def print_ranks(ranks: mutable.HashMap[String, Float], k: Int): Unit = {
     ranks
       .toSeq.filter(_._2 > 0.001)
-      .sortBy(_._2)
-      .reverse.take(k)
+      .sortBy(_._1.length)
+      .sortWith(_._2 > _._2)
+      .take(k)
       .foreach(rank => println(rank._1 + " " + rank._2))
   }
 
@@ -328,13 +331,13 @@ object QueryExpander {
 
         val completion_ranks = term_completion_candidates
           .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
-          .toArray.sortWith(_._2 > _._2)
 
-        if (Qc.length == 0)
-          completion_ranks.foreach(println(_))
+        if (Qc.length == 0) {
+          completion_ranks.toArray.sortWith(_._2 > _._2).foreach(println(_))
+          println()
+        }
 
         else {
-
           // ranks: phrase, score
           val ranks = mutable.HashMap[String, Float]()
 
@@ -346,16 +349,17 @@ object QueryExpander {
 
                 //PHRASE SELECTION PROBABILITY = TERM COMPLETION PROB x TERM TO PHRASE PROB
                 val phrase_selection_prob = term_comp_prob * term2phrase_prob(phrase, order, phrases)
+                val p = phrase_selection_prob * phrase_query_corr(Qc, phrase)
 
                 if (!ranks.contains(phrase))
-                  ranks.put(phrase, phrase_selection_prob)
-                else if (ranks.contains(phrase) && phrase_selection_prob > ranks(phrase))
-                  ranks.update(phrase, phrase_selection_prob)
+                  ranks.put(phrase, p)
+                else if (ranks.contains(phrase) && p > ranks(phrase))
+                  ranks.update(phrase, p)
 
-                //ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase))) NEWER BUT NOT EFFICIENT
+                //ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase))) //NEWER BUT NOT EFFICIENT
               }
 
-              //phrases.foreach(phrase => ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase)))) OLD
+              //phrases.foreach(phrase => ranks.map(rank => (rank._1, rank._2 * phrase_query_corr(Qc, phrase)))) //OLD
             }
           }
 
