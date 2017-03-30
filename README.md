@@ -26,7 +26,7 @@ Input files in directory can be any kind of text file, either as raw text or in 
 ```
 $ ./prob-query-expander arg1 [opt1]
       arg1: CORPUS DIRECTORY	 - directory with text files, either raw or conll
-      opt1: FORMAT            - 'conll', 'raw', default = 'conll'
+      opt1: FORMAT             - 'conll', 'raw', default = 'conll'
 ```
 Example run:
 ```
