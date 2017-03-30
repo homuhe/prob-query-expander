@@ -310,11 +310,14 @@ object QueryExpander {
 
   /**
     * Main method, query and argument handling
-    * @param args
+    * @param args 1st obligatory argument: corpus file (raw or conll) for ngram extraction
+    *             2nd   optional argument: corpus format, "conll"       = conll
+    *                                      anything else except "conll" = raw
+    *                                      default = "conll"
     */
   def main(args: Array[String]) {
 
-    if (args.length < 1) println("Not enough arguments!")
+    if (args.length < 1) help()
     else {
       if (args.length == 2) format = args(1)
 
@@ -339,7 +342,8 @@ object QueryExpander {
             .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
           if (Qc.length == 0) {
-            completion_ranks.toArray.sortWith(_._2 > _._2).foreach(println(_))
+            completion_ranks.toArray.sortWith(_._2 > _._2)
+                                    .foreach(x => println(x._1 + ", " + x._2))
             println()
           }
 
@@ -361,7 +365,6 @@ object QueryExpander {
 
                   //TOTAL PROBABILITY
                   val p = phrase_selection_prob * phrase_query_correlation
-                  p
                   if (!ranks.contains(phrase))
                     ranks.put(phrase, p)
                   else if (ranks.contains(phrase) && p > ranks(phrase))
@@ -370,17 +373,23 @@ object QueryExpander {
               }
             }
 
-
-            println("\nPhrase Selection Probability Ranking for: " + input)
+            println("\nRanking for: " + input)
             print_ranks(ranks, 20)
             println
           }
         }
-          catch { case x:Exception => println("Not found...\n")
-          }
+          catch { case x:Exception => println("Not found...\n")}
       }
     }
+
+    /**
+      * Helper method
+      */
+    def help(): Unit = {
+      println("Usage: ./cluster-kmeans arg1 [opt1]")
+      println("\t\targ1: INPUT FILE\t - text file, either raw or conll")
+      println("\t\topt1: FORMAT\t     - 'conll', 'raw', default = 'conll'")
+      sys.exit()
+    }
   }
-
-
 }
