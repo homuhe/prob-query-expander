@@ -1,12 +1,14 @@
 package com.ir
-
 import java.util.regex.Pattern
 import scala.collection.mutable
 import scala.io.Source
 import java.io.File
 
-/**
-  * Created by neele, holger on 09.03.17.
+/** Author:       Holger Muth-Hellebrandt,
+  *               Neele Witte
+  *
+  * Task:         IR Project WS16/17
+  * Description:  Query expander as a probabilistic ngram ranking approach
   */
 object QueryExpander {
 
@@ -14,17 +16,16 @@ object QueryExpander {
   val unigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
-  val docs2IDs = mutable.HashMap[String, Int]()
-  var num_of_words = 0 //TODO: can be deleted
-  var format = ""
+  var format = "conll" //default if argument not given
+  var num_of_docs = 0
   var uni_norm: Float = 0
   var bi_norm: Float = 0
   var tri_norm: Float = 0
 
   /**
-    * extracts a word array of a conll format file that contains only words (no punctuation) and is lowercased
-    * @param file : a String that denotes the input file
-    * @return the array of words contained in that file
+    * extracts an array of tokens of given file format
+    * @param file string that denotes the input file
+    * @return array of tokens contained in file
     */
   def preprocessing(file: String, format: String): Array[String] = {
     val delimiter = "[ \t\n\r,.?!\\-:;()\\[\\]'\"/*#&$]+"
@@ -49,21 +50,18 @@ object QueryExpander {
   }
 
   /**
-    * //TODO
-    * @param files
+    * Creates ngrams from multiple input files
+    * @param files input files to be processed
     */
   def create_ngrams(files: Array[File]): Unit = {
 
     var doc_id = 0
 
     for (file <- files) {
+      num_of_docs += 1
+
       val words = preprocessing(file.toString, format)
-      val doc = file.toString.split("/").last//.replace(".conll", "").toInt
-
-      //println("Reading doc " + doc + ", new docID: " + doc_id)//(files.indexOf(file)+1))
       extract_ngrams(words, doc_id)
-      docs2IDs.put(doc, doc_id)
-
       doc_id += 1
     }
   }
@@ -78,13 +76,10 @@ object QueryExpander {
 
     for (i <- tokens.indices) {
 
-      num_of_words += 1
       update_ngramMap(tokens(i), unigrams, docID)
 
       if (!stopwords.contains(tokens(i))) {
-
-        //unigrams: only non-stopword tokens
-        //update_ngramMap(tokens(i), unigrams, docID)
+        //only non-stopword tokens
 
         var bigram = Array[String]()
         var trigram = Array[String]()
@@ -123,24 +118,26 @@ object QueryExpander {
   }
 
   /**
-    * //TODO
-    * @param ngram
-    * @param ngramMap
-    * @param docID
-    * @return
+    * Updates ngram maps due to 3 different possible cases:
+    * case 1    = ngram is new -> put in map with freq 1
+    * case 2.1  = ngram with docID is known       -> update freq for docID
+    * case 2.2  = ngram is known but docID is new -> add docId to ngram with freq 1
+    * @param ngram ngram to be updated
+    * @param ngramMap according map of same order as ngram is
+    * @param docID doc of which ngram was extracted
     */
   def update_ngramMap(ngram: String,
-                      ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID:Int): Unit = {
+                      ngramMap: mutable.HashMap[String, Array[Array[Int]]], docID: Int): Unit = {
 
-    if (!ngramMap.contains(ngram)) {              //ngram new to Map -> new entry with new docID & freq 1
+    if (!ngramMap.contains(ngram)) {              //case 1
       ngramMap.put(ngram, Array(Array(docID, 1)))
     }
-    else {                                        //ngram already in Map, either with same or new docID
+    else {                                        //case 2.x
     var doclist = ngramMap(ngram)
       var index = 0
       var new_docID = true
       for (freqpair <- doclist) {
-        if (freqpair.head == docID) {             //ngram with docID exists in Map -> update freq
+        if (freqpair.head == docID) {             //case 2.1
           doclist.update(index, Array(freqpair(0), freqpair(1) + 1))
           ngramMap.update(ngram, doclist)
           new_docID = false
@@ -148,7 +145,7 @@ object QueryExpander {
         index += 1
       }
 
-      if (new_docID) {                            //ngram exists in Map, but given docID is new
+      if (new_docID) {                            //case 2.2
         doclist :+= Array(docID, 1)                 //append new docID - freq entry
         ngramMap.update(ngram, doclist)
       }
@@ -156,10 +153,9 @@ object QueryExpander {
   }
 
   /**
-    * for a given query word this method extracts all words that are possible word completions of that
-    * query word
+    * for a given, incomplete query word Qt, this method extracts all possible word completions
     *
-    * @param Qt a String = query word
+    * @param Qt a String = incomplete query word
     * @return an Array of Strings that contains the candidate word completions
     */
   def extract_candidates(Qt: String,
@@ -169,9 +165,9 @@ object QueryExpander {
   }
 
   /**
-    * calculates the inverse document frequency for a given term,
-    * can be extracted by using the number of total documents and the number of documents
-    * containing the term
+    * calculates the inverse document frequency for a given term:
+    * can be extracted by using the number of total documents and
+    *   the number of documents containing the term
     *
     * @param term a String
     * @return the IDF as a Float
@@ -179,12 +175,13 @@ object QueryExpander {
   def getIDF(term: String): Float = {
     val df = unigrams.getOrElse(term, Array()).length
 
-    Math.log(get_num_docs() / df).toFloat
+    Math.log(num_of_docs / df).toFloat
   }
 
   /**
-    * take a term and sum all the frequencies from all documents that contain that term
-    * @param term
+    * Returns frequencies of a term by
+    * summing through all freqs from all documents containing that term
+    * @param term which can be a single token or a phrase
     * @return the total frequency of a term in a corpus
     */
   def get_frequency(term: String): Int = {
@@ -197,10 +194,10 @@ object QueryExpander {
   }
 
   /**
-    * take a list of candidate completion words and return the sum of the product of the frequency and the IDF of a term:
-    * Sum: (#candidate*IDF(candidate)
-    * this can be used as the normalization factor in the probability calculation for the most probable term
-    * @param candidates
+    * returns the sum of the product of the frequencies and the IDFs of term completion candidates:
+    * Sum of candidates: (freq of candidate * IDF of candidate)
+    * this is used as normalization factor in the probability calculation for the most probable term
+    * @param candidates term completion candidates
     * @return a Float = normalization factor
     */
   def get_sum_of_FreqIDFs(candidates: Iterable[String]): Float = {
@@ -208,20 +205,9 @@ object QueryExpander {
   }
 
   /**
-    * This calculation gives the probability that a term is the completion:
-    * p(completion|partial word)
-    * @param candidate a candidate completion word
-    * @param candidates
-    * @return the probability of that term
-    */
-  def term_completion_prob(candidate: String, candidates: Iterable[String]): Float = {
-    (get_frequency(candidate) * getIDF(candidate)) / get_sum_of_FreqIDFs(candidates)
-  }
-
-  /**
-    * TODO
-    * @param candidate
-    * @return
+    * Extracts phrases of a given term completion candidate.
+    * @param candidate term completion candidate
+    * @return returns all ngram phrases beginning with the completion + order of the ngram
     */
   def extract_phrases(candidate: String): Array[(Iterable[String], Int)] = {
     Array((extract_candidates(candidate, unigrams), 1),
@@ -230,73 +216,90 @@ object QueryExpander {
   }
 
   /**
-    * TODO
-    * @param phrase
-    * @param order
-    * @return
+    * Term Completion Probability:
+    * the probability that term ci is the completion of partial user input Qt, p(ci|Qt)
+    * @param ci a completion candidate for Qt
+    * @param cm all completion candidates for Qt
+    * @return conditional probability P = p(ci|Qt)
     */
-  def term2phrase_prob(phrase:String, order: Int, phrases: Iterable[String]) = {
-
-    freqNorm(phrase, order) / phrases.map(phrase => freqNorm(phrase, order)).sum
+  def term_completion_prob(ci: String, cm: Iterable[String]): Float = {
+    (get_frequency(ci) * getIDF(ci)) / get_sum_of_FreqIDFs(cm)
   }
 
+  /**
+    * Term-to-Phrase Probability:
+    * the probability that a phrase pij is the desired query phrase of the term completion ci. p(pij|ci)
+    * @param pij a ngram phrase candidate pij of order m for term completion ci
+    * @param m ngram order of pij, needed for the norm factor
+    * @param phrases_m ngram phrases of order m
+    * @return conditional probability P = p(pij|ci)
+    */
+  def term2phrase_prob(pij: String, m: Int, phrases_m: Iterable[String]) = {
+    freqNorm(pij, m) / phrases_m.map(phrase => freqNorm(phrase, m)).sum
+  }
 
   /**
-    * //TODO
-    * @param order
-    * @return
+    * Frequency normalization of ngram phrase of order m
+    * @param phrase ngram phrase
+    * @param m ngram order of phrase
+    * @return frequenzy normalization factor
     */
-  def get_avg_nGram_freq(order: Int): Float = {
-    if (order == 1) uni_norm
-    else if (order == 2) bi_norm
+  def freqNorm(phrase: String, m: Int): Float = {
+    get_frequency(phrase) / Math.log(get_avg_nGram_freq(m)).toFloat
+  }
+
+  /**
+    * Retrieving ngram norm of order m
+    * @param m order m of desired ngram norm
+    * @return ngram norm of order m
+    */
+  def get_avg_nGram_freq(m: Int): Float = {
+    if (m == 1) uni_norm
+    else if (m == 2) bi_norm
     else tri_norm
 
   }
 
+  /**
+    * pre-computing ngram norms
+    */
   def generate_nGram_norms() {
     uni_norm = unigrams.keys.map(key => unigrams(key).map(_ (1).toFloat).sum).sum / unigrams.keys.size
     bi_norm = bigrams.keys.map(key => bigrams(key).map(_(1).toFloat).sum).sum / bigrams.keys.size
-    tri_norm = trigrams.keys.map(key => trigrams(key).map(_(1).toFloat).sum).sum / trigrams.keys.size //TODO wtf?!1
-    println()
+    tri_norm = trigrams.keys.map(key => trigrams(key).map(_(1).toFloat).sum).sum / trigrams.keys.size
   }
 
-  def freqNorm(phrase: String, order: Int): Float = {
-   get_frequency(phrase) /
-   Math.log(get_avg_nGram_freq(order))
-     .toFloat
- }
-
-
-  def phrase_query_corr(Qc: Array[String], phrase: String): Float = {
-
-    def get_postingList_for_Qc(Qc: Array[String]): Array[Int] = {
-      val all_postings = Qc.map(word => unigrams(word).map(el => el(0)))
-      val intersection = all_postings.reduceLeft(_.intersect(_))
-      intersection
+  /**
+    * Phrase-Query Correlation:
+    * the probability that a phrase pi is the 2nd half of the desired query,
+    * where the 1st half is the complete user input Qc.
+    *   Simplification: P = |docs containing Qc & pi| / |docs containing pi|
+    *
+    * @param Qc complete user input aka context, one or more complete terms
+    * @param pi phrase aka completion of desired query in context Qc.
+    * @return Phrase Query Correlation probability P = (Qc|pi)
+    */
+  def phrase_query_corr(Qc: Array[String], pi: String): Float = {
+    def get_postings(Qc: Array[String]): Array[Int] = {
+      Qc.map(token => unigrams(token).map(_(0))).reduceLeft(_.intersect(_))
     }
 
-    var posting = Array[Int]()
-    if (unigrams.contains(phrase)){
-      posting = unigrams(phrase).map(_(0))}
-    else if (bigrams.contains(phrase)){
-     posting = bigrams(phrase).map(_(0))}
-    else{
-      posting = trigrams(phrase).map(_(0))}
-    val postingList = get_postingList_for_Qc(Qc).intersect(posting)
-    val x = postingList.length.toFloat / posting.length.toFloat
-    x
+    var posting_pi = Array[Int]()
+
+    if (unigrams.contains(pi))      posting_pi = unigrams(pi).map(_(0))
+    else if (bigrams.contains(pi))  posting_pi = bigrams(pi).map(_(0))
+    else                            posting_pi = trigrams(pi).map(_(0))
+
+    val posting_Qc_pi = get_postings(Qc).intersect(posting_pi)
+    posting_Qc_pi.length.toFloat / posting_pi.length.toFloat
   }
 
   /**
-    * //TODO
-    * @return
-    */
-  def get_num_docs() = docs2IDs.size
-
-  /**
-    * TODO
-    * @param ranks
-    * @param k
+    * Prints top k query suggestions.
+    * Filters out highly unlikely queries before sorting.
+    * Pre-sorting of length for ranks with same score.
+    * @param ranks computed rank of query suggestion
+    * @param k number of top k suggestions printed
     */
   def print_ranks(ranks: mutable.HashMap[String, Float], k: Int): Unit = {
     ranks
@@ -308,14 +311,19 @@ object QueryExpander {
   }
 
 
-
+  /**
+    * Main method, query and argument handling
+    * @param args 1st obligatory argument: corpus file (raw or conll) for ngram extraction
+    *             2nd   optional argument: corpus format, "conll"       = conll
+    *                                      anything else except "conll" = raw
+    *                                      default = "conll"
+    */
   def main(args: Array[String]) {
 
-    if (args.length < 1) println("Not enough arguments!")
+    if (args.length < 1) help()
     else {
       if (args.length == 2) format = args(1)
 
-      math.random
       val input = new File(args(0)).listFiles
       val files = input.take(input.length / 2)
 
@@ -337,7 +345,8 @@ object QueryExpander {
             .map(candidate => (candidate, term_completion_prob(candidate, term_completion_candidates)))
 
           if (Qc.length == 0) {
-            completion_ranks.toArray.sortWith(_._2 > _._2).foreach(println(_))
+            completion_ranks.toArray.sortWith(_._2 > _._2)
+                                    .foreach(x => println(x._1 + ", " + x._2))
             println()
           }
 
@@ -359,7 +368,6 @@ object QueryExpander {
 
                   //TOTAL PROBABILITY
                   val p = phrase_selection_prob * phrase_query_correlation
-                  p
                   if (!ranks.contains(phrase))
                     ranks.put(phrase, p)
                   else if (ranks.contains(phrase) && p > ranks(phrase))
@@ -368,17 +376,23 @@ object QueryExpander {
               }
             }
 
-
-            println("\nPhrase Selection Probability Ranking for: " + input)
+            println("\nRanking for: " + input)
             print_ranks(ranks, 20)
             println
           }
         }
-          catch { case x:Exception => println("Not found...\n")
-          }
+          catch { case x:Exception => println("Not found...\n")}
       }
     }
+
+    /**
+      * Helper method
+      */
+    def help(): Unit = {
+      println("Usage: ./cluster-kmeans arg1 [opt1]")
+      println("\t\targ1: INPUT FILE\t - text file, either raw or conll")
+      println("\t\topt1: FORMAT\t     - 'conll', 'raw', default = 'conll'")
+      sys.exit()
+    }
   }
-
-
 }
