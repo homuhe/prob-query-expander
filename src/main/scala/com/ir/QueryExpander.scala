@@ -12,7 +12,7 @@ import java.io.File
   */
 object QueryExpander {
 
-  val stopwords = List("is", "this", "the", "of", "in", "to", "per", "the", "by", "a")
+  var stopwords = List("is", "this", "the", "of", "in", "to", "per", "the", "by", "a")
   val unigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val bigrams = mutable.HashMap[String, Array[Array[Int]]]()
   val trigrams = mutable.HashMap[String, Array[Array[Int]]]()
@@ -21,6 +21,12 @@ object QueryExpander {
   var uni_norm: Float = 0
   var bi_norm: Float = 0
   var tri_norm: Float = 0
+
+
+
+  def read_stopwords(file: String): List[String] = {
+    Source.fromFile(file).getLines().toList
+  }
 
   /**
     * extracts an array of tokens of given file format
@@ -39,7 +45,7 @@ object QueryExpander {
         .map(_.toLowerCase())
     }
     else {
-      words = Source.fromFile(file.toString).getLines()
+      words = Source.fromFile(file).getLines()
         .filter(!_.isEmpty)
         .map(_.toLowerCase()).mkString
         .split(" ").toIterator
@@ -313,15 +319,18 @@ object QueryExpander {
 
   /**
     * Main method, query and argument handling
-    * @param args 1st obligatory argument: corpus file (raw or conll) for ngram extraction
-    *             2nd   optional argument: corpus format, "conll"       = conll
+    * @param args 1st obligatory argument: corpus directory (raw or conll files) for ngram extraction
+    *               2nd optional argument: corpus format, "conll"       = conll
     *                                      anything else except "conll" = raw
     *                                      default = "conll"
+    *               3rd optional argument: stopwords list, each line one stopword
+    *
     */
   def main(args: Array[String]) {
 
     if (args.length < 1) help()
     else {
+      if (args.length == 3) stopwords = read_stopwords(args(2))
       if (args.length == 2) format = args(1)
 
       val input = new File(args(0)).listFiles
@@ -332,7 +341,7 @@ object QueryExpander {
 
         while (true) {
           try {
-          print("query-expander: ")
+          print("prob-query-expander: ")
 
           val input = scala.io.StdIn.readLine()
 
@@ -376,7 +385,6 @@ object QueryExpander {
               }
             }
 
-            println("\nRanking for: " + input)
             print_ranks(ranks, 20)
             println
           }
@@ -389,9 +397,10 @@ object QueryExpander {
       * Helper method
       */
     def help(): Unit = {
-      println("Usage: ./cluster-kmeans arg1 [opt1]")
-      println("\t\targ1: INPUT FILE\t - text file, either raw or conll")
-      println("\t\topt1: FORMAT\t     - 'conll', 'raw', default = 'conll'")
+      println("Usage: ./prob-query-expander arg1 [opt1] [opt2]")
+      println("\t\targ1: CORPUS DIRECTORY\t - directory with text files, either raw or conll")
+      println("\t\topt1: FORMAT\t           - 'conll', 'raw', default = 'conll'")
+      println("\t\topt2: STOPWORDS\t        - list of stopwords, each line one stopword")
       sys.exit()
     }
   }
