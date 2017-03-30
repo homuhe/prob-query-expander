@@ -6,7 +6,7 @@ Expands any given query by extracting ngrams of a given corpus. Ranking of the s
 The assumption is, that given an user input Q and a possible query suggestion p_i, the rank of p_i is computed as following:
 ```
 Rank pf p_i = phrase selection prob. x phrase-query correlation
- P(p_i | Q) =       P(p_i | Qt)     x       P(Qc | p_i)
+ P(p_i | Q) =       P(p_i | Qt)      x       P(Qc | p_i)
 ```
 where the user input Q splits into Qc + Qt, Qc = possible complete input of the user which is interpreted as a context in the phrase-query correlation, and Qt = partial and not complete input of the user.
 
