@@ -27,10 +27,11 @@ Input files in corpus directory can be any kind of text file, either as raw text
 $ ./prob-query-expander arg1 [opt1]
       arg1: CORPUS DIRECTORY - directory with text files, either raw or conll
       opt1: FORMAT           - 'conll', 'raw', default = 'conll'
-      opt2: STOPWORDS	       - list of stopwords, each line one stopword
+      opt2: STOPWORDS        - list of stopwords, each line one stopword
 ```
 Example run:
-```$ ./prob-query-expander /home/corpus_files conll
+```
+$ ./prob-query-expander /home/corpus_files conll
 > prob-query-expander: president of the uni
 united states 0.091636546
 united states government 0.07686396
