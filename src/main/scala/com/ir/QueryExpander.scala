@@ -4,8 +4,11 @@ import scala.collection.mutable
 import scala.io.Source
 import java.io.File
 
-/**
-  * Created by neele, holger on 09.03.17.
+/** Author:       Holger Muth-Hellebrandt,
+  *               Neele Witte
+  *
+  * Task:         IR Project WS16/17
+  * Description:  Query expander as a probabilistic ngram ranking approach
   */
 object QueryExpander {
 
