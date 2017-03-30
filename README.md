@@ -19,7 +19,7 @@ phrase selection prob. = term completion prob. x term-to-phrase prob.
 
 
 ## Input
-Input files in directory can be any kind of text file, either as raw text or in CoNLL format.
+Input files in corpus directory can be any kind of text file, either as raw text or in CoNLL format.
 
 
 ## Usage
@@ -27,6 +27,7 @@ Input files in directory can be any kind of text file, either as raw text or in 
 $ ./prob-query-expander arg1 [opt1]
       arg1: CORPUS DIRECTORY - directory with text files, either raw or conll
       opt1: FORMAT           - 'conll', 'raw', default = 'conll'
+      opt2: STOPWORDS	       - list of stopwords, each line one stopword
 ```
 Example run:
 ```$ ./prob-query-expander /home/corpus_files conll
