@@ -29,8 +29,7 @@ $ ./prob-query-expander arg1 [opt1]
       opt1: FORMAT           - 'conll', 'raw', default = 'conll'
 ```
 Example run:
-```
-$ ./prob-query-expander /home/corpus_files conll
+```$ ./prob-query-expander /home/corpus_files conll
 > prob-query-expander: president of the uni
 united states 0.091636546
 united states government 0.07686396
