@@ -4,8 +4,11 @@ Query expansion without query logs - a probabilistic approach
 Expands any given query by extracting ngrams of a given corpus. Ranking of the suggestions is computed after the approach of [Bhatia, Majumda, and Mitra, "Query suggestions in the absence of query logs.", 2011.](http://www.tyr.unlu.edu.ar/tallerIR/2013/papers/querysuggestion.pdf).
 
 The assumption is, that given an user input Q and a possible query suggestion p_i, the rank of p_i is computed as following:
+
+```
 Rank pf p_i = phrase selection probability x phrase-query correlation
 P(p_i | Q) = P(p_i | Q_t) x P(Q_c | p_i)
+```
 
 ## Input
 Sample input file is a word embedding trained on German Wikipedia by using the word2vec CBOW model with vector size 300 and a minimum word frequency of 50.
