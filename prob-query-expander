@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mvn scala:run -DmainClass=com.ir.QueryExpander -DaddArgs="$1|$2|$3"
