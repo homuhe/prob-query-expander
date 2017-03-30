@@ -313,7 +313,7 @@ object QueryExpander {
 
   /**
     * Main method, query and argument handling
-    * @param args 1st obligatory argument: corpus file (raw or conll) for ngram extraction
+    * @param args 1st obligatory argument: corpus directory (raw or conll files) for ngram extraction
     *             2nd   optional argument: corpus format, "conll"       = conll
     *                                      anything else except "conll" = raw
     *                                      default = "conll"
@@ -332,7 +332,7 @@ object QueryExpander {
 
         while (true) {
           try {
-          print("query-expander: ")
+          print("prob-query-expander: ")
 
           val input = scala.io.StdIn.readLine()
 
@@ -389,9 +389,9 @@ object QueryExpander {
       * Helper method
       */
     def help(): Unit = {
-      println("Usage: ./cluster-kmeans arg1 [opt1]")
-      println("\t\targ1: INPUT FILE\t - text file, either raw or conll")
-      println("\t\topt1: FORMAT\t     - 'conll', 'raw', default = 'conll'")
+      println("Usage: ./prob-query-expander arg1 [opt1]")
+      println("\t\targ1: CORPUS DIRECTORY\t - directory with text files, either raw or conll")
+      println("\t\topt1: FORMAT\t           - 'conll', 'raw', default = 'conll'")
       sys.exit()
     }
   }
