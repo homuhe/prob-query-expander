@@ -13,7 +13,7 @@ where the user input Q splits into Qc + Qt, Qc = possible complete input of the 
 The computation of the phrase selection probability splits into two steps/calculations, completion c_i of the partial word (term completion probability) and then selection of a phrase containing that word completion c_i (term-to-phrase probability):
 ```
 phrase selection prob. = term completion prob. x term-to-phrase prob.
-      P(p_ij | Qt)      =       P(c_i | Qt)     x       P(p_ij | c_i)
+     P(p_ij | Qt)      =      P(c_i | Qt)      x     P(p_ij | c_i)
 ```
 
 
