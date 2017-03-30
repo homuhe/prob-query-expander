@@ -19,30 +19,28 @@ phrase selection prob. = term completion prob. x term-to-phrase prob.
 
 
 ## Input
-Input file can be any text file, either as raw text or in CoNLL format.
+Input files in directory can be any kind of text file, either as raw text or in CoNLL format.
 
 
 ## Usage
 ```
-$./prob-query-expander arg1 [opt1]")
-      arg1: INPUT FILE - text file, either raw or conll
-      opt1: FORMAT     - 'conll', 'raw', default = 'conll'
+$ ./prob-query-expander arg1 [opt1]
+      arg1: CORPUS DIRECTORY	 - directory with text files, either raw or conll
+      opt1: FORMAT            - 'conll', 'raw', default = 'conll'
 ```
 Example run:
 ```
-$ ./cluster-kmeans sample-input.txt 100 0.01
-> 0 Seit
-0 Ab
-0 Von
-0 Zum
-1 Dichter
-1 Mensch
-1 Historiker
+$ ./prob-query-expander /home/corpus_files conll
+> prob-query-expander: president of the uni
+united states 0.091636546
+united states government 0.07686396
+united 0.0367568
+union of police associations 0.02680128
 ...
 ```
 
 ## Output
-Query expansion ranks
+Output are the query expansion suggestions together with the ranking score.
 
 
 _
