@@ -376,7 +376,6 @@ object QueryExpander {
               }
             }
 
-            println("\nRanking for: " + input)
             print_ranks(ranks, 20)
             println
           }
