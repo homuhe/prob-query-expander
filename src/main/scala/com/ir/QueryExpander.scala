@@ -341,7 +341,7 @@ object QueryExpander {
 
         while (true) {
           try {
-          print("prob-query-expander: ")
+          print("\nprob-query-expander: ")
 
           val input = scala.io.StdIn.readLine()
 
